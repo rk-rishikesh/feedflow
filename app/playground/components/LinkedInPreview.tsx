@@ -1,12 +1,64 @@
+import { useEffect, useState } from 'react';
+
 interface LinkedInPreviewProps {
     draftContent: string;
     setDraftContent: (content: string) => void;
 }
 
 export function LinkedInPreview({ draftContent, setDraftContent }: LinkedInPreviewProps) {
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchLinkedInContent = async () => {
+            const savedLinkedIn = localStorage.getItem('linkedin_content');
+            if (savedLinkedIn) {
+                setDraftContent(savedLinkedIn);
+                return;
+            }
+
+            const knowledgeCore = localStorage.getItem('generated_content');
+            if (!knowledgeCore) return;
+
+            setIsLoading(true);
+            try {
+                const res = await fetch('/api/gemini/social', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ knowledgeCore: JSON.parse(knowledgeCore) }),
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                const parsed = JSON.parse(data.text);
+                const post = parsed.linkedin_post;
+
+                setDraftContent(post);
+                localStorage.setItem('linkedin_content', post);
+            } catch (error) {
+                console.error('Error generating linkedin content:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchLinkedInContent();
+    }, [setDraftContent]);
+
     return (
         <div className="flex-1 flex flex-col max-w-2xl mx-auto w-full">
-            <h1 className="text-2xl font-semibold text-[#2B2B2B] mb-6">LinkedIn Preview</h1>
+            <h1 className="text-2xl font-semibold text-[#2B2B2B] mb-6 flex items-center justify-between">
+                LinkedIn Preview
+                {isLoading && (
+                    <span className="text-sm font-normal text-[#B3B3B3] flex items-center gap-2">
+                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        Generating...
+                    </span>
+                )}
+            </h1>
             <div className="flex-1 flex flex-col bg-[#FFFFFF] border border-[#D4D4D4] rounded-2xl p-6 shadow-sm">
                 <div className="flex items-start gap-3 mb-4">
                     <div className="w-12 h-12 rounded-full bg-[#D4D4D4] flex items-center justify-center shrink-0">
@@ -26,7 +78,7 @@ export function LinkedInPreview({ draftContent, setDraftContent }: LinkedInPrevi
                 <textarea
                     value={draftContent}
                     onChange={(e) => setDraftContent(e.target.value)}
-                    placeholder="Share your thoughts..."
+                    placeholder={isLoading ? "Generating professional story..." : "Share your thoughts..."}
                     className="flex-1 w-full p-0 resize-none border-none outline-none text-[#2B2B2B] placeholder-[#B3B3B3] text-base leading-relaxed bg-transparent mb-4"
                 />
                 <div className="flex items-center gap-4 pt-4 border-t border-[#D4D4D4] text-[#B3B3B3]">
@@ -54,3 +106,4 @@ export function LinkedInPreview({ draftContent, setDraftContent }: LinkedInPrevi
         </div>
     );
 }
+

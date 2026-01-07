@@ -93,6 +93,9 @@ export default function PlaygroundPage() {
 
       setDraftContent(formattedText);
       localStorage.setItem("generated_content", generatedText);
+      // Clear social cache to force re-generation from the new core
+      localStorage.removeItem("twitter_content");
+      localStorage.removeItem("linkedin_content");
     } catch (e: any) {
       console.error(e);
       alert("Failed to generate: " + e.message);
