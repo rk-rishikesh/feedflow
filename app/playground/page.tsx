@@ -30,9 +30,12 @@ export default function PlaygroundPage() {
     if (!url) return;
 
     const isYoutube = url.includes('youtube.com') || url.includes('youtu.be');
+    const isTwitter = url.includes('twitter.com') || url.includes('x.com');
+    const isGenericVideo = url.endsWith('.mp4') || url.endsWith('.webm');
+
     const newSource: Source = {
       id: Date.now(),
-      type: isYoutube ? 'youtube' : 'article',
+      type: isYoutube ? 'youtube' : (isTwitter ? 'tweet' : (isGenericVideo ? 'video' : 'article')),
       title: url,
       url,
       author: 'Unknown',
@@ -63,19 +66,17 @@ export default function PlaygroundPage() {
   };
 
   const handleGenerateContent = async () => {
-    const videoSource = sources.find(s => s.type === 'youtube' || s.url.includes('youtube.com') || s.url.includes('youtu.be'));
-
-    if (!videoSource) {
-      alert("Please add a YouTube video source first.");
+    if (sources.length === 0) {
+      alert("Please add at least one source (YouTube, article, tweet, etc.)");
       return;
     }
 
     setIsGenerating(true);
     try {
-      const res = await fetch("/api/gemini/youtube", {
+      const res = await fetch("/api/gemini/orchestrate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: videoSource.url, prompt: "Generate a detailed text summary/post based on this video." }),
+        body: JSON.stringify({ sources }),
       });
 
       const data = await res.json();

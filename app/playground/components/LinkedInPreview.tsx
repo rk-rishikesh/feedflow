@@ -59,7 +59,7 @@ export function LinkedInPreview({ draftContent, setDraftContent }: LinkedInPrevi
                     </span>
                 )}
             </h1>
-            <div className="flex-1 flex flex-col bg-[#FFFFFF] border border-[#D4D4D4] rounded-2xl p-6 shadow-sm">
+            <div className="flex-1 flex flex-col bg-[#FFFFFF] p-6">
                 <div className="flex items-start gap-3 mb-4">
                     <div className="w-12 h-12 rounded-full bg-[#D4D4D4] flex items-center justify-center shrink-0">
                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
