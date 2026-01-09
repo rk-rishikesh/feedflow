@@ -1,4 +1,4 @@
-export type SourceType = 'youtube' | 'blog' | 'news' | 'tweet' | 'article' | 'video';
+export type SourceType = 'youtube' | 'blog' | 'news' | 'tweet' | 'article' | 'pdf';
 
 export interface Source {
     id: number;
@@ -9,4 +9,19 @@ export interface Source {
     author?: string;
     date?: string;
     description?: string;
+}
+
+export interface SavedContent {
+    id: number;
+    title: string;
+    content: string; // The Knowledge Core
+    sources: Source[];
+    platform: 'twitter' | 'linkedin' | 'blog' | 'summary' | 'image' | 'default';
+    createdAt: string;
+    status: 'draft' | 'published' | 'scheduled';
+    twitterContent?: string;
+    linkedinContent?: string;
+    blogContent?: string;
+    summaryContent?: string;
+    imageContent?: string;
 }

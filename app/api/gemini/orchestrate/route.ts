@@ -1,175 +1,120 @@
 import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
-import ytdl from "@distube/ytdl-core";
-import fs from "fs";
-import path from "path";
-import os from "os";
-
-export const maxDuration = 300; // Increase timeout to 5 minutes for multiple sources
-
-async function processVideoSource(url: string, apiKey: string) {
-    const ai = new GoogleGenAI({ apiKey });
-    const isYoutube = url.includes('youtube.com') || url.includes('youtu.be');
-    const videoId = isYoutube ? ytdl.getVideoID(url) : Date.now().toString();
-    const tempDir = os.tmpdir();
-    const tempFilePath = path.join(tempDir, `${videoId}.mp4`);
-
-    console.log(`Downloading video from ${url}...`);
-
-    const writeStream = fs.createWriteStream(tempFilePath);
-
-    if (isYoutube) {
-        const stream = ytdl(url, { quality: "lowest", filter: "audioandvideo" });
-        await new Promise((resolve, reject) => {
-            stream.pipe(writeStream);
-            stream.on("end", resolve);
-            stream.on("error", reject);
-        });
-    } else {
-        // Generic video download
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Failed to fetch video: ${res.statusText}`);
-        const buffer = Buffer.from(await res.arrayBuffer());
-        fs.writeFileSync(tempFilePath, buffer);
-    }
-
-    console.log("Download complete, uploading to Gemini...");
-
-    const uploadResult = await (ai.files as any).uploadFile(tempFilePath, {
-        displayName: `Video ${videoId}`,
-        mimeType: "video/mp4"
-    });
-
-    // Wait for processing
-    let file = await ai.files.get({ name: uploadResult.file.name });
-    while (file.state === "PROCESSING") {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        file = await ai.files.get({ name: uploadResult.file.name });
-    }
-
-    // Cleanup local file
-    if (fs.existsSync(tempFilePath)) {
-        fs.unlinkSync(tempFilePath);
-    }
-
-    if (file.state === "FAILED") {
-        throw new Error(`Video processing failed for ${url}`);
-    }
-
-    return {
-        fileData: {
-            mimeType: file.mimeType,
-            fileUri: file.uri
-        },
-        fileName: uploadResult.file.name
-    };
-}
-
-async function processTextSource(url: string) {
-    try {
-        const isTwitter = url.includes('twitter.com') || url.includes('x.com');
-        const res = await fetch(url, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
-        });
-
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-
-        const html = await res.text();
-        // Remove scripts, styles, and extra tags
-        const text = html
-            .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gm, '')
-            .replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gm, '')
-            .replace(/<[^>]*>/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim()
-            .slice(0, 15000);
-
-        return { text: `Source Type: ${isTwitter ? 'Twitter' : 'Web Article'}\nURL: ${url}\nContent: ${text}` };
-    } catch (error: any) {
-        console.error(`Failed to fetch ${url}:`, error);
-        return { text: `Source URL: ${url}\nNote: Could not fetch content directly (${error.message}). Please rely on the title or common knowledge if possible.` };
-    }
-}
 
 export async function POST(req: Request) {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-        return NextResponse.json({ error: "GEMINI_API_KEY missing" }, { status: 500 });
-    }
-
-    const { sources } = await req.json();
-    if (!sources || !Array.isArray(sources) || sources.length === 0) {
-        return NextResponse.json({ error: "No sources provided" }, { status: 400 });
-    }
-
-    const ai = new GoogleGenAI({ apiKey });
-    const processedParts: any[] = [];
-    const filesToDelete: string[] = [];
-
     try {
-        for (const source of sources) {
-            // Determine source type based on URL for processing
-            const isYoutube = source.url.includes('youtube.com') || source.url.includes('youtu.be');
-            const isGenericVideo = source.url.endsWith('.mp4') || source.url.endsWith('.webm');
+        const { sources } = await req.json();
+        console.log(sources);
+        const apiKey = process.env.GEMINI_API_KEY;
 
-            if (isYoutube || isGenericVideo) {
-                const result = await processVideoSource(source.url, apiKey);
-                processedParts.push(result.fileData);
-                filesToDelete.push(result.fileName);
-            } else {
-                const result = await processTextSource(source.url);
-                processedParts.push(result);
-            }
+        if (!apiKey) {
+            return NextResponse.json(
+                { error: "GEMINI_API_KEY is not defined" },
+                { status: 500 }
+            );
         }
 
+        if (!sources || !Array.isArray(sources) || sources.length === 0) {
+            return NextResponse.json(
+                { error: "At least one source is required" },
+                { status: 400 }
+            );
+        }
+
+        const ai = new GoogleGenAI({ apiKey });
+
         const orchestratorPrompt = `
-            Role: You are the Master Content Architect and Orchestrator.
-            Input: Multiple sources (YouTube videos, articles, tweets, etc.) provided as video files or text snippets.
-            Objective: Synthesize all provided information into a single, unified "Knowledge Core." This core must represent the most valuable insights across ALL sources.
-            
-            Synthesize common themes, identify unique perspectives from each source, and resolve any contradictions by highlighting multiple viewpoints if applicable.
+                Role: You are a Holistic Intelligence Architect.
+                Objective: Your task is to ingest multiple diverse sources (YouTube videos, PDFs, and web articles) and synthesize them into a single, high-density "Knowledge Core."
+                
+                CRITICAL REQUIREMENT: BALANCED SYNTHESIS.
+                - Do not let the video content overshadow the text-based articles or PDFs.
+                - Cross-reference every source. If Source A (Video) says X and Source B (Article) says Y, combine them or contrast them.
+                - If you are provided with 3 sources, I expect to see specific evidence and insights derived from all 3.
+                - This "Knowledge Core" is the ONLY source of truth for downstream agents who will generate Tweets, LinkedIn posts, and Blogs. Provide enough raw data, quotes, and hooks for them to work with.
 
-            1. Extraction Guidelines
-            - Narrative Arcs: Map the overarching journey across all sources.
-            - Gold Nuggets: Extract the most provocative or insightful quotes from ANY of the sources.
-            - Data & Entities: Aggregate all key numbers, names, and tools.
-            - Visual Brief: Create a cohesive visual aesthetic derived from the collective vibes.
-
-            2. Output Format (STRICT JSON ONLY)
-            Return ONLY a valid JSON object.
-            {
-              "metadata": {
-                "title": "Unified Synthesis Title",
-                "tone": "Consistent Tone",
-                "target_audience": "Aggregated Audience"
-              },
-              "semantic_core": {
-                "key_takeaways": [{"point": "Idea", "supporting_detail": "Synthesis from sources"}],
-                "gold_nuggets": [{"quote": "...", "source": "Source Name/URL", "context": "..."}],
-                "frameworks_or_entities": {
-                  "named_entities": [],
-                  "proprietary_methods": []
+                Output Format (STRICT JSON ONLY):
+                {
+                    "metadata": {
+                        "project_title": "A compelling title synthesized from all sources",
+                        "sources_processed": ["list of URLs or types found"],
+                        "overall_narrative": "A 2-sentence summary of the unified message"
+                    },
+                    "source_analysis": [
+                        {
+                            "source_index": 0,
+                            "key_contribution": "What unique value did this specific source add?",
+                            "top_3_points": ["Point 1", "Point 2", "Point 3"]
+                        }
+                    ],
+                    "knowledge_core": {
+                        "themes": [
+                            {
+                                "topic": "Theme name",
+                                "details": "Deep explanation synthesized from multiple sources",
+                                "source_refs": [0, 1]
+                            }
+                        ],
+                        "gold_nuggets": [
+                            {"content": "A powerful quote, stat, or insight", "origin": "Source name/type"}
+                        ],
+                        "frameworks": ["Named entities, tools, or proprietary methods discovered"]
+                    },
+                    "social_fuel": {
+                        "hooks": {
+                            "aggressive": "A controversial or high-stakes hook",
+                            "educational": "A value-first 'How-to' hook",
+                            "story": "A narrative/personal journey hook"
+                        },
+                        "visual_brief": "A specific description for an AI image generator that captures the soul of this content"
+                    }
                 }
-              },
-              "visual_brief": {
-                "aesthetic": "...",
-                "image_prompts": []
-              },
-              "content_hooks": {
-                "thread_opener": "Viral synthesis hook",
-                "linkedin_hook": "Professional synthesis hook"
-              }
+                `;
+
+        const parts = [];
+
+        // Add each source with explicit context to ensure the model pays attention to each
+        sources.forEach((source: any, index: number) => {
+            parts.push({ text: `--- SOURCE ${index} (${source.type.toUpperCase()}) ---` });
+
+            if (source.type === 'youtube') {
+                parts.push({
+                    fileData: {
+                        mimeType: "video/mp4",
+                        fileUri: source.url,
+                    },
+                });
+            } else if (source.type === 'pdf' || source.url.toLowerCase().endsWith('.pdf')) {
+                parts.push({
+                    fileData: {
+                        mimeType: "application/pdf",
+                        fileUri: source.url,
+                    },
+                });
+            } else {
+                parts.push({
+                    text: `Analyze this web article in full and extract its core arguments: ${source.url}`
+                });
             }
-        `;
+        });
 
-        processedParts.push({ text: orchestratorPrompt });
+        // Add the orchestrator prompt as the final instruction
+        parts.push({ text: "--- FINAL INSTRUCTION ---" });
+        parts.push({ text: orchestratorPrompt });
 
-        const response = await (ai as any).models.generateContent({
-            model: "gemini-2.0-flash-exp",
-            contents: [{ role: "user", parts: processedParts }],
-            config: { responseMimeType: "application/json" }
+        console.log("Constructed Parts:", JSON.stringify(parts.map(p => p.text ? p.text : "MULTIMODAL_DATA")));
+
+        const response = await ai.models.generateContent({
+            model: "gemini-2.0-flash",
+            contents: [
+                {
+                    role: "user",
+                    parts: parts
+                }
+            ],
+            config: {
+                responseMimeType: "application/json",
+            }
         });
 
         const text = response.text;
@@ -177,16 +122,10 @@ export async function POST(req: Request) {
         return NextResponse.json({ text });
 
     } catch (error: any) {
-        console.error("Orchestration error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
-    } finally {
-        // Cleanup uploaded files
-        for (const fileName of filesToDelete) {
-            try {
-                await ai.files.delete({ name: fileName });
-            } catch (e) {
-                console.error("Failed to delete file:", fileName, e);
-            }
-        }
+        console.error("Error in Master Orchestrator:", error);
+        return NextResponse.json(
+            { error: error.message || "Failed to process sources" },
+            { status: 500 }
+        );
     }
 }

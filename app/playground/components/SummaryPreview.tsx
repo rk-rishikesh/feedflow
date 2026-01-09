@@ -3,20 +3,22 @@ import { useEffect } from 'react';
 interface SummaryPreviewProps {
     draftContent: string;
     setDraftContent: (content: string) => void;
+    knowledgeCore?: string;
 }
 
-export function SummaryPreview({ draftContent, setDraftContent }: SummaryPreviewProps) {
+export function SummaryPreview({ draftContent, setDraftContent, knowledgeCore }: SummaryPreviewProps) {
     useEffect(() => {
-        const stored = localStorage.getItem('generated_content');
-        if (stored) {
+        if (draftContent && draftContent.length > 0) return;
+
+        if (knowledgeCore) {
             try {
-                const parsed = JSON.parse(stored);
+                const parsed = JSON.parse(knowledgeCore);
                 setDraftContent(JSON.stringify(parsed, null, 2));
             } catch (e) {
-                setDraftContent(stored);
+                setDraftContent(knowledgeCore);
             }
         }
-    }, [setDraftContent]);
+    }, [knowledgeCore, setDraftContent]);
 
     return (
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">

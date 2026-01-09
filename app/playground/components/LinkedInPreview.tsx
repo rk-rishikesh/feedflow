@@ -3,20 +3,18 @@ import { useEffect, useState } from 'react';
 interface LinkedInPreviewProps {
     draftContent: string;
     setDraftContent: (content: string) => void;
+    knowledgeCore?: string;
 }
 
-export function LinkedInPreview({ draftContent, setDraftContent }: LinkedInPreviewProps) {
+export function LinkedInPreview({ draftContent, setDraftContent, knowledgeCore }: LinkedInPreviewProps) {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchLinkedInContent = async () => {
-            const savedLinkedIn = localStorage.getItem('linkedin_content');
-            if (savedLinkedIn) {
-                setDraftContent(savedLinkedIn);
+            if (draftContent && draftContent.length > 0) {
                 return;
             }
 
-            const knowledgeCore = localStorage.getItem('generated_content');
             if (!knowledgeCore) return;
 
             setIsLoading(true);
@@ -34,7 +32,6 @@ export function LinkedInPreview({ draftContent, setDraftContent }: LinkedInPrevi
                 const post = parsed.linkedin_post;
 
                 setDraftContent(post);
-                localStorage.setItem('linkedin_content', post);
             } catch (error) {
                 console.error('Error generating linkedin content:', error);
             } finally {
@@ -43,7 +40,7 @@ export function LinkedInPreview({ draftContent, setDraftContent }: LinkedInPrevi
         };
 
         fetchLinkedInContent();
-    }, [setDraftContent]);
+    }, [knowledgeCore]);
 
     return (
         <div className="flex-1 flex flex-col max-w-2xl mx-auto w-full">

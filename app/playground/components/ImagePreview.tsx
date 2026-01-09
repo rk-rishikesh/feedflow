@@ -1,9 +1,27 @@
+import { useEffect } from 'react';
+
 interface ImagePreviewProps {
     draftContent: string;
     setDraftContent: (content: string) => void;
+    knowledgeCore?: string;
 }
 
-export function ImagePreview({ draftContent, setDraftContent }: ImagePreviewProps) {
+export function ImagePreview({ draftContent, setDraftContent, knowledgeCore }: ImagePreviewProps) {
+    useEffect(() => {
+        if (draftContent && draftContent.length > 0) return;
+
+        if (knowledgeCore) {
+            try {
+                const parsed = JSON.parse(knowledgeCore);
+                const visualBrief = parsed.visual_brief;
+                if (visualBrief && visualBrief.image_prompts && visualBrief.image_prompts.length > 0) {
+                    setDraftContent(visualBrief.image_prompts[0]);
+                }
+            } catch (e) {
+                console.error("Failed to parse visual brief", e);
+            }
+        }
+    }, [knowledgeCore, setDraftContent]);
     return (
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
             <h1 className="text-2xl font-semibold text-[#2B2B2B] mb-6">Image Preview</h1>

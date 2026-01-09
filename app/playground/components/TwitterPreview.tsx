@@ -3,21 +3,20 @@ import { useEffect, useState, useRef } from 'react';
 interface TwitterPreviewProps {
     draftContent: string;
     setDraftContent: (content: string) => void;
+    knowledgeCore?: string;
 }
 
-export function TwitterPreview({ draftContent, setDraftContent }: TwitterPreviewProps) {
+export function TwitterPreview({ draftContent, setDraftContent, knowledgeCore }: TwitterPreviewProps) {
     const [isLoading, setIsLoading] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const fetchTwitterContent = async () => {
-            const savedTwitter = localStorage.getItem('twitter_content');
-            if (savedTwitter) {
-                setDraftContent(savedTwitter);
+            // If we already have content, don't auto-fetch
+            if (draftContent && !draftContent.startsWith('Content creation is important')) {
                 return;
             }
 
-            const knowledgeCore = localStorage.getItem('generated_content');
             if (!knowledgeCore) return;
 
             setIsLoading(true);
@@ -37,7 +36,6 @@ export function TwitterPreview({ draftContent, setDraftContent }: TwitterPreview
                     : responseData.twitter_thread;
 
                 setDraftContent(thread);
-                localStorage.setItem('twitter_content', thread);
             } catch (error) {
                 console.error('Error generating twitter content:', error);
             } finally {
@@ -45,10 +43,8 @@ export function TwitterPreview({ draftContent, setDraftContent }: TwitterPreview
             }
         };
 
-        if (!draftContent || draftContent.startsWith('Content creation is important')) {
-            fetchTwitterContent();
-        }
-    }, [setDraftContent, draftContent]);
+        fetchTwitterContent();
+    }, [knowledgeCore]);
 
     // Split content by the separator
     const tweets = draftContent.split(/\n\n---\n\n/).map(t => t.trim()).filter(Boolean);
