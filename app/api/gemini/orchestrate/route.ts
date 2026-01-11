@@ -30,7 +30,7 @@ export async function POST(req: Request) {
                 CRITICAL REQUIREMENT: BALANCED SYNTHESIS.
                 - Do not let the video content overshadow the text-based articles or PDFs.
                 - Cross-reference every source. If Source A (Video) says X and Source B (Article) says Y, combine them or contrast them.
-                - If you are provided with 3 sources, I expect to see specific evidence and insights derived from all 3.
+                - If you are provided with n sources, I expect to see specific evidence and insights derived from all n sources.
                 - This "Knowledge Core" is the ONLY source of truth for downstream agents who will generate Tweets, LinkedIn posts, and Blogs. Provide enough raw data, quotes, and hooks for them to work with.
 
                 Output Format (STRICT JSON ONLY):

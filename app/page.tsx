@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
   return (
-    <div className="min-h-screen bg-[#FFFFFF] p-4 lg:p-2">
+    <div className="min-h-screen bg-[#FFFFFF] p-4 lg:p-8">
       <div className="max-w-7xl mx-auto min-h-screen flex flex-col">
         {/* FEED FLOW Title */}
         <div className="flex justify-center pt-4">
@@ -30,7 +30,7 @@ export default function Home() {
 
           {/* Text - Extreme Right */}
           <div className="text-[#2B2B2B] text-base lg:text-lg xl:text-xl">
-          Stop drowning in YouTube transcripts. Our multi-layered AI funnel filters thousands of messages to surface brilliant ideas, market signals, and actionable insights in real-time.
+            Stop drowning in YouTube transcripts. Our multi-layered AI funnel filters thousands of messages to surface brilliant ideas, market signals, and actionable insights in real-time.
           </div>
         </div>
 
@@ -50,7 +50,7 @@ export default function Home() {
 
           <div
             className="bg-[#2B2B2B] rounded-full px-6 py-3 flex items-center gap-4 w-fit mb-8 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#2B2B2B]/30"
-            onClick={() => router.push('/playground')}
+            onClick={() => router.push('/home')}
           >
             <span className="text-white font-bold text-base lg:text-lg xl:text-xl transition-all duration-300">
               Generate Your Post
@@ -139,7 +139,7 @@ export default function Home() {
                 <h2 className="text-2xl lg:text-3xl font-bold text-[#2B2B2B] mb-2 tracking-wide">
                   FEED FLOW
                 </h2>
-                
+
               </div>
 
               {/* Links Section */}

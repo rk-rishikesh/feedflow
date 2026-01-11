@@ -63,7 +63,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 </button>
 
                 <button
-                    onClick={() => router.push('/profile')}
+                    onClick={() => router.push('/home')}
                     className="flex flex-col items-center gap-2 text-[#D4D4D4] hover:text-[#FFFFFF] transition-colors"
                 >
                     <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
