@@ -1,4 +1,4 @@
-export type SourceType = 'youtube' | 'blog' | 'news' | 'tweet' | 'article' | 'pdf';
+export type SourceType = 'youtube' | 'blog' | 'news' | 'tweet' | 'article' | 'github' | 'doc';
 
 export interface Source {
     id: number;
@@ -20,8 +20,15 @@ export interface SavedContent {
     createdAt: string;
     status: 'draft' | 'published' | 'scheduled';
     twitterContent?: string;
+    twitterPersona?: string;
     linkedinContent?: string;
+    linkedinPersona?: string;
     blogContent?: string;
+    blogTitle?: string;
+    blogMetadata?: any;
+    blogType?: string;
+    blogPersona?: string;
     summaryContent?: string;
     imageContent?: string;
+    knowledgeContext?: any;
 }

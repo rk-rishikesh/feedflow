@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { SourcesPanel } from './SourcesPanel';
-import { TwitterPreview } from './TwitterPreview';
-import { LinkedInPreview } from './LinkedInPreview';
-import { BlogPreview } from './BlogPreview';
-import { SummaryPreview } from './SummaryPreview';
-import { ImagePreview } from './ImagePreview';
+import { TwitterPlayground } from './TwitterPlayground';
+import { LinkedInPlayground } from './LinkedInPlayground';
+import { ArticlePlayground } from './ArticlePlayground';
+import { DigestPlayground } from './DigestPlayground';
+import { ImagePlayground } from './ImagePlayground';
 import { DefaultEditor } from './DefaultEditor';
 import { Source, SourceType, SavedContent } from '../types';
 import { useRouter } from 'next/navigation';
@@ -30,10 +30,20 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
 
     // Platform-specific content states
     const [twitterContent, setTwitterContent] = useState(initialContent?.twitterContent || '');
+    const [twitterPersona, setTwitterPersona] = useState(initialContent?.twitterPersona || 'viral_hooks');
+
     const [linkedinContent, setLinkedinContent] = useState(initialContent?.linkedinContent || '');
+    const [linkedinPersona, setLinkedinPersona] = useState(initialContent?.linkedinPersona || 'thought_leader');
+
     const [blogContent, setBlogContent] = useState(initialContent?.blogContent || '');
+    const [blogTitle, setBlogTitle] = useState(initialContent?.blogTitle || '');
+    const [blogMetadata, setBlogMetadata] = useState<any>(initialContent?.blogMetadata || null);
+    const [blogType, setBlogType] = useState(initialContent?.blogType || 'informative');
+    const [blogPersona, setBlogPersona] = useState(initialContent?.blogPersona || 'master_seo');
+
     const [summaryContent, setSummaryContent] = useState(initialContent?.summaryContent || '');
     const [imageContent, setImageContent] = useState(initialContent?.imageContent || '');
+    const [knowledgeContext, setKnowledgeContext] = useState<any>(initialContent?.knowledgeContext || null);
 
     useEffect(() => {
         setMounted(true);
@@ -63,11 +73,13 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
         if (!url) return;
 
         const isYoutube = url.includes('youtube.com') || url.includes('youtu.be');
-        const isPdf = url.toLowerCase().endsWith('.pdf');
+        const isGithub = url.includes('github.com');
+        const isDoc = url.includes('docs.') || url.includes('/docs/') || url.includes('/documentation/');
 
         let sourceType: SourceType = 'article';
         if (isYoutube) sourceType = 'youtube';
-        else if (isPdf) sourceType = 'pdf';
+        else if (isGithub) sourceType = 'github';
+        else if (isDoc) sourceType = 'doc';
 
         const newSource: Source = {
             id: Date.now(),
@@ -87,114 +99,89 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
     const removeSource = (id: number) => {
         const updatedSources = sources.filter((source) => source.id !== id);
         updateSources(updatedSources);
-        if (expandedSource === id) {
-            setExpandedSource(null);
-        }
     };
 
     const toggleExpand = (id: number) => {
         setExpandedSource(expandedSource === id ? null : id);
-        setTimeout(() => {
-            const element = document.getElementById(`source-${id}`);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }, 50);
     };
 
     const handleGenerateContent = async () => {
-        if (sources.length === 0) {
-            alert("Please add at least one source first.");
-            return;
-        }
-
+        if (sources.length === 0) return alert("Add sources first");
         setIsGenerating(true);
+
         try {
-            const res = await fetch("/api/gemini/orchestrate", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    sources: sources.map(s => ({ type: s.type, url: s.url }))
-                }),
+            const res = await fetch('/api/gemini/orchestrate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sources }),
             });
-
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error);
 
-            const generatedText = data.text;
-            const videoSource = sources.find(s => s.type === 'youtube') || sources[0];
+            if (data.error) throw new Error(data.error);
 
-            let formattedText = generatedText;
-            try {
-                const parsed = JSON.parse(generatedText);
-                formattedText = JSON.stringify(parsed, null, 2);
-            } catch (e) {
-                console.warn("Could not parse generated text as JSON");
-            }
+            setKnowledgeContext(data.knowledgeContext);
+            setSources(data.sources); // Updated sources with extracted content
 
-            setDraftContent(formattedText);
-
-            // Create or update session
-            const sessionId = currentSessionId || Date.now();
-            const newSavedContent: SavedContent = {
-                id: sessionId,
-                title: videoSource.title || "Untitled Project",
-                content: generatedText,
-                sources: sources,
-                platform: activeTab || 'default',
-                createdAt: new Date().toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }),
-                status: 'draft',
-                twitterContent: '',
-                linkedinContent: '',
-                blogContent: '',
-                summaryContent: '',
-                imageContent: ''
-            };
-
-            const existingContent = JSON.parse(localStorage.getItem("saved_content") || "[]");
+            // Initial session creation logic
             if (!currentSessionId) {
+                const sessionId = Date.now();
+                const newSavedContent: SavedContent = {
+                    id: sessionId,
+                    title: data.knowledgeContext?.CoreNarrative || sources[0].title || "Untitled Project",
+                    content: "",
+                    sources: data.sources,
+                    knowledgeContext: data.knowledgeContext,
+                    platform: activeTab || 'twitter',
+                    createdAt: new Date().toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'short', day: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
+                    }),
+                    status: 'draft',
+                    twitterContent: '',
+                    twitterPersona: 'viral_hooks',
+                    linkedinContent: '',
+                    linkedinPersona: 'thought_leader',
+                    blogContent: '',
+                    blogTitle: '',
+                    blogMetadata: null,
+                    blogType: 'informative',
+                    blogPersona: 'master_seo',
+                    summaryContent: '',
+                    imageContent: ''
+                };
+
+                const existingContent = JSON.parse(localStorage.getItem("saved_content") || "[]");
                 localStorage.setItem("saved_content", JSON.stringify([newSavedContent, ...existingContent]));
                 setCurrentSessionId(sessionId);
-                // Redirect to the new URL without refreshing if possible, or just push
                 router.push(`/playground/${sessionId}`);
             } else {
-                updateSavedSession(newSavedContent);
+                updateSavedSession({
+                    knowledgeContext: data.knowledgeContext,
+                    sources: data.sources
+                });
             }
-
-            // Reset platform contents when major core changes
-            setTwitterContent('');
-            setLinkedinContent('');
-            setBlogContent('');
-            setSummaryContent('');
-            setImageContent('');
-
         } catch (e: any) {
             console.error(e);
-            alert("Failed to generate: " + e.message);
+            alert("Failed to orchestrate: " + e.message);
         } finally {
             setIsGenerating(false);
         }
     };
 
-    // Auto-save platform content changes
+    // Auto-save changes
     useEffect(() => {
         if (currentSessionId) {
             updateSavedSession({
-                twitterContent,
-                linkedinContent,
-                blogContent,
-                summaryContent,
-                imageContent,
-                content: draftContent
+                twitterContent, twitterPersona,
+                linkedinContent, linkedinPersona,
+                blogContent, blogTitle, blogMetadata, blogType, blogPersona,
+                summaryContent, imageContent,
+                content: draftContent,
+                sources,
+                knowledgeContext
             });
         }
-    }, [twitterContent, linkedinContent, blogContent, summaryContent, imageContent, draftContent]);
+    }, [twitterContent, twitterPersona, linkedinContent, linkedinPersona, blogContent, blogTitle, blogMetadata, blogType, blogPersona, summaryContent, imageContent, draftContent, sources]);
 
     return (
         <div className="flex h-screen bg-[#FFFFFF] relative overflow-hidden">
@@ -205,38 +192,55 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                     <div className="flex-1 flex flex-col overflow-hidden bg-[#FFFFFF]">
                         <div className="flex-1 flex flex-col overflow-hidden p-8">
                             {activeTab === 'twitter' && (
-                                <TwitterPreview
+                                <TwitterPlayground
+                                    sources={sources}
                                     draftContent={twitterContent}
                                     setDraftContent={setTwitterContent}
-                                    knowledgeCore={draftContent}
+                                    persona={twitterPersona}
+                                    setPersona={setTwitterPersona}
+                                    knowledgeContext={knowledgeContext}
                                 />
                             )}
                             {activeTab === 'linkedin' && (
-                                <LinkedInPreview
+                                <LinkedInPlayground
+                                    sources={sources}
                                     draftContent={linkedinContent}
                                     setDraftContent={setLinkedinContent}
-                                    knowledgeCore={draftContent}
+                                    persona={linkedinPersona}
+                                    setPersona={setLinkedinPersona}
+                                    knowledgeContext={knowledgeContext}
                                 />
                             )}
                             {activeTab === 'blog' && (
-                                <BlogPreview
+                                <ArticlePlayground
+                                    sources={sources}
                                     draftContent={blogContent}
                                     setDraftContent={setBlogContent}
-                                    knowledgeCore={draftContent}
+                                    title={blogTitle}
+                                    setTitle={setBlogTitle}
+                                    metadata={blogMetadata}
+                                    setMetadata={setBlogMetadata}
+                                    persona={blogPersona}
+                                    setPersona={setBlogPersona}
+                                    articleType={blogType}
+                                    setArticleType={setBlogType}
+                                    knowledgeContext={knowledgeContext}
                                 />
                             )}
                             {activeTab === 'summary' && (
-                                <SummaryPreview
+                                <DigestPlayground
+                                    sources={sources}
                                     draftContent={summaryContent}
                                     setDraftContent={setSummaryContent}
-                                    knowledgeCore={draftContent}
+                                    knowledgeContext={knowledgeContext}
                                 />
                             )}
                             {activeTab === 'image' && (
-                                <ImagePreview
+                                <ImagePlayground
+                                    sources={sources}
                                     draftContent={imageContent}
                                     setDraftContent={setImageContent}
-                                    knowledgeCore={draftContent}
+                                    knowledgeContext={knowledgeContext}
                                 />
                             )}
                             {!activeTab && (
