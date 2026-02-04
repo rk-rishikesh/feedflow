@@ -9,7 +9,7 @@ import { ArticlePlayground } from './ArticlePlayground';
 import { DigestPlayground } from './DigestPlayground';
 import { ImagePlayground } from './ImagePlayground';
 import { DefaultEditor } from './DefaultEditor';
-import { Source, SourceType, SavedContent } from '../types';
+import { Source, SourceType, SavedContent, Thought } from '../types';
 import { useRouter } from 'next/navigation';
 
 interface PlaygroundViewProps {
@@ -27,22 +27,27 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
     const [isAddingSource, setIsAddingSource] = useState(false);
     const [newSourceUrl, setNewSourceUrl] = useState('');
     const [currentSessionId, setCurrentSessionId] = useState<number | null>(initialContent?.id || null);
+    const [isRefining, setIsRefining] = useState(false);
+    const [refinementInstructions, setRefinementInstructions] = useState('');
 
     // Platform-specific content states
     const [twitterContent, setTwitterContent] = useState(initialContent?.twitterContent || '');
-    const [twitterPersona, setTwitterPersona] = useState(initialContent?.twitterPersona || 'viral_hooks');
+    const [twitterThoughts, setTwitterThoughts] = useState<Thought[]>(initialContent?.twitterThoughts || (initialContent?.twitterThoughtProcess ? [{ id: 'init', type: 'initial', text: initialContent.twitterThoughtProcess, timestamp: new Date().toISOString() }] : []));
 
     const [linkedinContent, setLinkedinContent] = useState(initialContent?.linkedinContent || '');
-    const [linkedinPersona, setLinkedinPersona] = useState(initialContent?.linkedinPersona || 'thought_leader');
+    const [linkedinThoughts, setLinkedinThoughts] = useState<Thought[]>(initialContent?.linkedinThoughts || (initialContent?.linkedinThoughtProcess ? [{ id: 'init', type: 'initial', text: initialContent.linkedinThoughtProcess, timestamp: new Date().toISOString() }] : []));
 
     const [blogContent, setBlogContent] = useState(initialContent?.blogContent || '');
     const [blogTitle, setBlogTitle] = useState(initialContent?.blogTitle || '');
     const [blogMetadata, setBlogMetadata] = useState<any>(initialContent?.blogMetadata || null);
-    const [blogType, setBlogType] = useState(initialContent?.blogType || 'informative');
-    const [blogPersona, setBlogPersona] = useState(initialContent?.blogPersona || 'master_seo');
+    const [blogThoughts, setBlogThoughts] = useState<Thought[]>(initialContent?.blogThoughts || (initialContent?.blogThoughtProcess ? [{ id: 'init', type: 'initial', text: initialContent.blogThoughtProcess, timestamp: new Date().toISOString() }] : []));
 
     const [summaryContent, setSummaryContent] = useState(initialContent?.summaryContent || '');
+    const [summaryThoughts, setSummaryThoughts] = useState<Thought[]>(initialContent?.summaryThoughts || (initialContent?.summaryThoughtProcess ? [{ id: 'init', type: 'initial', text: initialContent.summaryThoughtProcess, timestamp: new Date().toISOString() }] : []));
+
     const [imageContent, setImageContent] = useState(initialContent?.imageContent || '');
+    const [imageThoughts, setImageThoughts] = useState<Thought[]>(initialContent?.imageThoughts || (initialContent?.imageThoughtProcess ? [{ id: 'init', type: 'initial', text: initialContent.imageThoughtProcess, timestamp: new Date().toISOString() }] : []));
+
     const [knowledgeContext, setKnowledgeContext] = useState<any>(initialContent?.knowledgeContext || null);
 
     useEffect(() => {
@@ -120,9 +125,8 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
             if (data.error) throw new Error(data.error);
 
             setKnowledgeContext(data.knowledgeContext);
-            setSources(data.sources); // Updated sources with extracted content
+            setSources(data.sources);
 
-            // Initial session creation logic
             if (!currentSessionId) {
                 const sessionId = Date.now();
                 const newSavedContent: SavedContent = {
@@ -138,16 +142,17 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                     }),
                     status: 'draft',
                     twitterContent: '',
-                    twitterPersona: 'viral_hooks',
+                    twitterThoughtProcess: '',
                     linkedinContent: '',
-                    linkedinPersona: 'thought_leader',
+                    linkedinThoughtProcess: '',
                     blogContent: '',
                     blogTitle: '',
                     blogMetadata: null,
-                    blogType: 'informative',
-                    blogPersona: 'master_seo',
+                    blogThoughtProcess: '',
                     summaryContent: '',
-                    imageContent: ''
+                    summaryThoughtProcess: '',
+                    imageContent: '',
+                    imageThoughtProcess: ''
                 };
 
                 const existingContent = JSON.parse(localStorage.getItem("saved_content") || "[]");
@@ -168,20 +173,110 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
         }
     };
 
-    // Auto-save changes
+    const handleRefine = async (instructions: string) => {
+        if (!activeTab || !instructions.trim()) return;
+        setIsRefining(true);
+
+        // Determine what content to refine
+        let originalContent: any = '';
+        let originalThought = '';
+
+        switch (activeTab) {
+            case 'twitter':
+                originalContent = twitterContent;
+                originalThought = twitterThoughts[twitterThoughts.length - 1]?.text || '';
+                break;
+            case 'linkedin':
+                originalContent = linkedinContent;
+                originalThought = linkedinThoughts[linkedinThoughts.length - 1]?.text || '';
+                break;
+            case 'blog':
+                originalContent = blogContent;
+                originalThought = blogThoughts[blogThoughts.length - 1]?.text || '';
+                break;
+            case 'summary':
+                originalContent = summaryContent;
+                originalThought = summaryThoughts[summaryThoughts.length - 1]?.text || '';
+                break;
+            case 'image':
+                originalContent = imageContent;
+                originalThought = imageThoughts[imageThoughts.length - 1]?.text || '';
+                break;
+        }
+
+        try {
+            const res = await fetch('/api/gemini/refine', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    platform: activeTab,
+                    originalContent,
+                    originalThought,
+                    knowledgeContext,
+                    instructions
+                }),
+            });
+            const data = await res.json();
+
+            if (data.error) throw new Error(data.error);
+
+            const newThought: Thought = {
+                id: Date.now().toString(),
+                type: 'refinement',
+                text: data.thoughtProcess,
+                instructions: instructions,
+                timestamp: new Date().toISOString()
+            };
+
+            // Update state based on platform
+            switch (activeTab) {
+                case 'twitter':
+                    setTwitterContent(Array.isArray(data.updatedContent) ? data.updatedContent.join('\n\n---\n\n') : data.updatedContent);
+                    setTwitterThoughts(prev => [...prev, newThought]);
+                    break;
+                case 'linkedin':
+                    setLinkedinContent(data.updatedContent);
+                    setLinkedinThoughts(prev => [...prev, newThought]);
+                    break;
+                case 'blog':
+                    setBlogContent(data.updatedContent);
+                    setBlogThoughts(prev => [...prev, newThought]);
+                    if (data.metadata?.title) setBlogTitle(data.metadata.title);
+                    break;
+                case 'summary':
+                    setSummaryContent(data.updatedContent);
+                    setSummaryThoughts(prev => [...prev, newThought]);
+                    break;
+                case 'image':
+                    setImageContent(data.updatedContent);
+                    setImageThoughts(prev => [...prev, newThought]);
+                    break;
+            }
+
+            setRefinementInstructions('');
+            alert("Refinement complete. Check the updated content.");
+        } catch (e: any) {
+            console.error(e);
+            alert("Refinement failed: " + e.message);
+        } finally {
+            setIsRefining(false);
+        }
+    };
+
     useEffect(() => {
         if (currentSessionId) {
             updateSavedSession({
-                twitterContent, twitterPersona,
-                linkedinContent, linkedinPersona,
-                blogContent, blogTitle, blogMetadata, blogType, blogPersona,
-                summaryContent, imageContent,
+                twitterContent, twitterThoughts,
+                linkedinContent, linkedinThoughts,
+                blogContent, blogTitle, blogMetadata, blogThoughts,
+                summaryContent, summaryThoughts,
+                imageContent, imageThoughts,
                 content: draftContent,
                 sources,
                 knowledgeContext
             });
         }
-    }, [twitterContent, twitterPersona, linkedinContent, linkedinPersona, blogContent, blogTitle, blogMetadata, blogType, blogPersona, summaryContent, imageContent, draftContent, sources]);
+    }, [twitterContent, twitterThoughts, linkedinContent, linkedinThoughts, blogContent, blogTitle, blogMetadata, blogThoughts, summaryContent, summaryThoughts, imageContent, imageThoughts, draftContent, sources]);
 
     return (
         <div className="flex h-screen bg-[#FFFFFF] relative overflow-hidden">
@@ -196,9 +291,10 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                                     sources={sources}
                                     draftContent={twitterContent}
                                     setDraftContent={setTwitterContent}
-                                    persona={twitterPersona}
-                                    setPersona={setTwitterPersona}
+                                    thoughts={twitterThoughts}
+                                    setThoughts={setTwitterThoughts}
                                     knowledgeContext={knowledgeContext}
+                                    isProcessing={isRefining}
                                 />
                             )}
                             {activeTab === 'linkedin' && (
@@ -206,9 +302,10 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                                     sources={sources}
                                     draftContent={linkedinContent}
                                     setDraftContent={setLinkedinContent}
-                                    persona={linkedinPersona}
-                                    setPersona={setLinkedinPersona}
+                                    thoughts={linkedinThoughts}
+                                    setThoughts={setLinkedinThoughts}
                                     knowledgeContext={knowledgeContext}
+                                    isProcessing={isRefining}
                                 />
                             )}
                             {activeTab === 'blog' && (
@@ -220,11 +317,10 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                                     setTitle={setBlogTitle}
                                     metadata={blogMetadata}
                                     setMetadata={setBlogMetadata}
-                                    persona={blogPersona}
-                                    setPersona={setBlogPersona}
-                                    articleType={blogType}
-                                    setArticleType={setBlogType}
+                                    thoughts={blogThoughts}
+                                    setThoughts={setBlogThoughts}
                                     knowledgeContext={knowledgeContext}
+                                    isProcessing={isRefining}
                                 />
                             )}
                             {activeTab === 'summary' && (
@@ -232,7 +328,10 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                                     sources={sources}
                                     draftContent={summaryContent}
                                     setDraftContent={setSummaryContent}
+                                    thoughts={summaryThoughts}
+                                    setThoughts={setSummaryThoughts}
                                     knowledgeContext={knowledgeContext}
+                                    isProcessing={isRefining}
                                 />
                             )}
                             {activeTab === 'image' && (
@@ -240,11 +339,19 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                                     sources={sources}
                                     draftContent={imageContent}
                                     setDraftContent={setImageContent}
+                                    thoughts={imageThoughts}
+                                    setThoughts={setImageThoughts}
                                     knowledgeContext={knowledgeContext}
+                                    isProcessing={isRefining}
                                 />
                             )}
                             {!activeTab && (
-                                <DefaultEditor draftContent={draftContent} setDraftContent={setDraftContent} />
+                                <DefaultEditor
+                                    draftContent={draftContent}
+                                    setDraftContent={setDraftContent}
+                                    isGenerating={isGenerating}
+                                    knowledgeContext={knowledgeContext}
+                                />
                             )}
                         </div>
                     </div>
@@ -254,6 +361,7 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                         isAddingSource={isAddingSource}
                         newSourceUrl={newSourceUrl}
                         expandedSource={expandedSource}
+                        activeTab={activeTab}
                         setNewSourceUrl={setNewSourceUrl}
                         setIsAddingSource={setIsAddingSource}
                         handleCreateSource={handleCreateSource}
@@ -261,8 +369,12 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                         removeSource={removeSource}
                         toggleExpand={toggleExpand}
                         onGenerate={handleGenerateContent}
+                        onRefine={handleRefine}
                         isGenerating={isGenerating}
+                        isRefining={isRefining}
                         isMounted={mounted}
+                        refinementInstructions={refinementInstructions}
+                        setRefinementInstructions={setRefinementInstructions}
                     />
                 </div>
             </div>

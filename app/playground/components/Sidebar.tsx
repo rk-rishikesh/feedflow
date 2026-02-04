@@ -62,12 +62,26 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
 
                 <div className="w-8 h-[1px] bg-[#333333]" />
 
+                {/* Knowledge Graph Button */}
+                <button
+                    onClick={() => setActiveTab(null)}
+                    className={`p-3 rounded-2xl transition-all group relative ${activeTab === null
+                        ? 'bg-[#FFFFFF] text-[#000000] shadow-glow scale-110'
+                        : 'text-[#888888] hover:text-white hover:bg-[#333333]'
+                        }`}
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <span className="absolute left-full ml-4 px-2 py-1 bg-[#1A1A1A] text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-[#333333]">Knowledge Graph</span>
+                </button>
+
                 {agents.map((agent) => (
                     <button
                         key={agent.id}
                         onClick={() => setActiveTab(agent.id as any)}
                         className={`p-3 rounded-2xl transition-all group relative ${activeTab === agent.id
-                            ? 'bg-[#FFFFFF] text-[#000000] shadow-glow'
+                            ? 'bg-[#FFFFFF] text-[#000000] shadow-glow scale-110'
                             : 'text-[#888888] hover:text-white hover:bg-[#333333]'
                             }`}
                     >

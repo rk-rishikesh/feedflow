@@ -2,30 +2,21 @@ import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
 
 const ARTICLE_SYSTEM_PROMPT = `
-Role: You are a Master Content Architect. Your goal is to transform multiple sources into a high-authority, long-form article.
-You must synthesize the technical depth of the sources while adhering to a specific "Persona."
+Role: You are a Master Content Architect Agent. Your goal is to transform multiple source outputs into a high-authority, long-form article.
+Source Material: You will be provided with a rich "Knowledge Context" containing FULL transcripts, flattened codebases, and deep insights from source agents.
 
-Personas:
-- MASTER SEO: High structural hierarchy, rich with keywords, focuses on distribution and readability.
-- DEEP DEVELOPER: Technical, code-heavy, focuses on architecture, "how it works," and implementation details.
-- BUSINESS STRATEGIST: Focuses on high-level impact, ROI, market trends, and value propositions.
-- CREATIVE STORYTELLER: Use analogies, personal narrative style, and compelling hooks to make technical topics accessible.
+Agent-to-Agent Communication:
+You are receiving this data from specialized Extraction Agents. Your task is to:
+1. Synthesize the technical depth of all sources into a cohesive narrative.
+2. Formulate a structure that flows logically from data to insight.
+3. Show your "Thought Process" - explain how you combined the different sources, why you chose specific technical details to include, and how you architected the article's flow.
+4. Generate the final article.
 
-Article Types:
-- TECHNICAL: Architecture documentation style.
-- GUIDE: How-to format with steps.
-- WALKTHROUGH: Deep-dive tutorial.
-- INFORMATIVE: Industry analysis/Thought leadership.
-
-Constraint: 
-- Use the FULL context of provided sources.
-- Return a strictly valid JSON object.
-- Formatting must be Markdown-friendly.
-
-Output Structure:
+Output Structure (JSON ONLY):
 {
+  "thoughtProcess": "A detailed explanation of your architectural decisions and how you synthesized multiple data streams into a single narrative.",
   "metadata": {
-    "title": "A compelling title suited for the persona",
+    "title": "A compelling title suited for the content depth",
     "reading_time": "Estimated mins",
     "target_audience": "Description",
     "tone_analysis": "Brief description of the generated tone"
@@ -37,7 +28,7 @@ Output Structure:
 
 export async function POST(req: Request) {
     try {
-        const { sources, articleType, persona, knowledgeContext } = await req.json();
+        const { sources, knowledgeContext } = await req.json();
         const apiKey = process.env.GEMINI_API_KEY;
 
         if (!apiKey) {
@@ -48,30 +39,16 @@ export async function POST(req: Request) {
 
         const parts = [
             { text: ARTICLE_SYSTEM_PROMPT },
-            { text: `--- INSTRUCTION ---\nGenerate a ${articleType.toUpperCase()} article using the ${persona.toUpperCase()} persona.` }
+            { text: `--- INSTRUCTION ---\nAnalyze the provided Knowledge Context and architect a comprehensive article with your internal thought process.` }
         ];
 
         if (knowledgeContext) {
             parts.push({
-                text: `--- KNOWLEDGE CONTEXT (SYNTHESIZED FROM SOURCES) ---\n${JSON.stringify(knowledgeContext, null, 2)}`
+                text: `--- KNOWLEDGE CONTEXT FROM SOURCE AGENTS ---\n${JSON.stringify(knowledgeContext, null, 2)}`
             });
         } else {
-            // Add each source manually if no context provided (fallback)
             sources.forEach((source: any, index: number) => {
-                parts.push({ text: `--- SOURCE ${index} (${source.type.toUpperCase()}) ---` });
-
-                if (source.type === 'youtube') {
-                    parts.push({
-                        fileData: {
-                            mimeType: "video/mp4",
-                            fileUri: source.url,
-                        },
-                    } as any);
-                } else {
-                    parts.push({
-                        text: `Analyze this content: ${source.url}`
-                    });
-                }
+                parts.push({ text: `--- SOURCE ${index} (${source.type.toUpperCase()}) --- \n${source.url}` });
             });
         }
 
@@ -83,6 +60,7 @@ export async function POST(req: Request) {
             }
         });
 
+        if (!response.text) throw new Error("Failed to generate content");
         return NextResponse.json({ text: response.text });
 
     } catch (error: any) {

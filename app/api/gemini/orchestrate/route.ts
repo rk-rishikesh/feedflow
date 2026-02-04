@@ -13,80 +13,82 @@ export async function POST(req: Request) {
             );
         }
 
-        // 1. Gather raw content from all sources using dedicated scrapers/processors
+        // 1. Gather rich content from all sources using specialized source agents
         const processedSources = await Promise.all(sources.map(async (source) => {
-            let content = "";
+            let data: any = null;
             let status = "processed";
 
-            switch (source.type) {
-                case 'github':
-                    content = await processGithub(source.url);
-                    break;
-                case 'youtube':
-                    content = await processYoutube(source.url);
-                    break;
-                case 'article':
-                case 'blog':
-                case 'news':
-                case 'website':
-                    content = await scrapeWebsite(source.url);
-                    break;
-                default:
-                    content = `Unsupported source type: ${source.type}`;
-                    status = "error";
+            console.log(`Orchestrator: Processing ${source.type} - ${source.url}`);
+
+            try {
+                switch (source.type) {
+                    case 'github':
+                        data = await processGithub(source.url);
+                        break;
+                    case 'youtube':
+                        data = await processYoutube(source.url);
+                        break;
+                    case 'article':
+                    case 'blog':
+                    case 'news':
+                    case 'website':
+                        data = await scrapeWebsite(source.url);
+                        break;
+                    default:
+                        data = { error: `Unsupported source type: ${source.type}` };
+                        status = "error";
+                }
+            } catch (err) {
+                console.error(`Orchestrator error for ${source.url}:`, err);
+                status = "error";
+                data = { error: "Processing failed" };
             }
 
             return {
                 ...source,
-                extractedContent: content,
+                data,
                 processingStatus: status
             };
         }));
 
-        // 2. Synthesize everything into a "Unified Knowledge Context" using Gemini
-        // This makes the downstream generation much easier as they don't have to parse raw scrapings
+        // 2. Generate a Project Name using Gemini
         const apiKey = process.env.GEMINI_API_KEY;
-        if (!apiKey) {
-            return NextResponse.json({
-                sources: processedSources,
-                warning: "Knowledge synthesis skipped (No API key)"
-            });
-        }
+        let projectName = "Untitled Project";
 
-        const ai = new GoogleGenAI({ apiKey });
-        const synthesisPrompt = `
-            You are a Knowledge Architect. Ingest the following raw extracted content from multiple tools and synthesize it into a single, structured Knowledge Context.
-            
-            EXTRACTED DATA:
-            ${processedSources.map((s, i) => `--- SOURCE ${i} (${s.type}) ---\n${s.extractedContent.slice(0, 5000)}`).join('\n\n')}
-            
-            Synthesize this into a structured JSON with:
-            1. Core Narrative (What is the unified story?)
-            2. Key Technical Concepts (Extract spec names, tools, architectures)
-            3. Unique Insights (Nuggets of wisdom, surprising stats)
-            4. Potential Hooks (Aggressive, Professional, Story-based)
-            5. Content Pillars (3-4 main categories of information)
-            
-            STRICT JSON OUTPUT ONLY.
-        `;
+        if (apiKey) {
+            const ai = new GoogleGenAI({ apiKey });
+            const namingPrompt = `
+                Based on the following source titles and snippets, generate a concise, high-impact Project Name (2-4 words) that captures the core essence of this research/content collection.
+                
+                SOURCES:
+                ${processedSources.map(s => `- [${s.type.toUpperCase()}] ${s.title || s.url}`).join('\n')}
+                
+                Respond with ONLY the project name.
+            `;
 
-        const response = await ai.models.generateContent({
-            model: "gemini-2.0-flash",
-            contents: [{ role: "user", parts: [{ text: synthesisPrompt }] }],
-            config: {
-                responseMimeType: "application/json",
+            try {
+                const result = await ai.models.generateContent({
+                    model: "gemini-2.0-flash",
+                    contents: [{ role: "user", parts: [{ text: namingPrompt }] }],
+                });
+                if (result.text) projectName = result.text.trim().replace(/["]+/g, '');
+            } catch (nErr) {
+                console.error("Naming error:", nErr);
             }
-        });
-
-        if (!response.text) {
-            throw new Error("Gemini failed to generate synthesized knowledge.");
         }
 
-        const synthesisData = JSON.parse(response.text);
+        // 3. Aggregate everything into a Unified Knowledge Context
+        const knowledgeContext = {
+            projectName,
+            sources: processedSources,
+            timestamp: new Date().toISOString(),
+            totalSources: processedSources.length
+        };
 
         return NextResponse.json({
+            projectName,
             sources: processedSources,
-            knowledgeContext: synthesisData
+            knowledgeContext: knowledgeContext
         });
 
     } catch (error: any) {

@@ -11,6 +11,14 @@ export interface Source {
     description?: string;
 }
 
+export interface Thought {
+    id: string;
+    type: 'initial' | 'refinement';
+    text: string;
+    instructions?: string;
+    timestamp: string;
+}
+
 export interface SavedContent {
     id: number;
     title: string;
@@ -20,15 +28,22 @@ export interface SavedContent {
     createdAt: string;
     status: 'draft' | 'published' | 'scheduled';
     twitterContent?: string;
-    twitterPersona?: string;
+    twitterThoughts?: Thought[];
     linkedinContent?: string;
-    linkedinPersona?: string;
+    linkedinThoughts?: Thought[];
     blogContent?: string;
     blogTitle?: string;
     blogMetadata?: any;
-    blogType?: string;
-    blogPersona?: string;
+    blogThoughts?: Thought[];
     summaryContent?: string;
+    summaryThoughts?: Thought[];
     imageContent?: string;
+    imageThoughts?: Thought[];
     knowledgeContext?: any;
+    // Keep old fields for backward compatibility during migration if needed
+    twitterThoughtProcess?: string;
+    linkedinThoughtProcess?: string;
+    blogThoughtProcess?: string;
+    summaryThoughtProcess?: string;
+    imageThoughtProcess?: string;
 }

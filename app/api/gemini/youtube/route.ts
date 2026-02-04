@@ -1,96 +1,69 @@
 import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
 
+export const maxDuration = 120;
+
 export async function POST(req: Request) {
+    const apiKey = process.env.GEMINI_API_KEY;
+
     try {
-        const { url, prompt } = await req.json();
-        const apiKey = process.env.GEMINI_API_KEY;
+        const { url } = await req.json();
 
         if (!apiKey) {
-            return NextResponse.json(
-                { error: "GEMINI_API_KEY is not defined" },
-                { status: 500 }
-            );
+            return NextResponse.json({ error: "GEMINI_API_KEY is not defined" }, { status: 500 });
         }
 
         if (!url) {
-            return NextResponse.json(
-                { error: "YouTube URL is required" },
-                { status: 400 }
-            );
+            return NextResponse.json({ error: "YouTube URL is required" }, { status: 400 });
         }
 
+        console.log("Analyzing YouTube video (Direct Gemini Mode):", url);
+
+        // Process with Gemini using only the URL as context
         const ai = new GoogleGenAI({ apiKey });
+        const extractionPrompt = `
+            You are a YouTube Content Analyst. 
+            Analyze the following YouTube video link and extract the most important information:
+            URL: ${url}
 
-        const orchestratorPrompt = `
-                Role: You are the Lead Content Strategist and Semantic Architect.
-                Input: A raw video/transcript from a YouTube URL.
-                Objective: Deconstruct the video into its fundamental "Knowledge Core." This core will be used by downstream agents to create Tweets, LinkedIn posts, Blogs, and Images.
+            TASK:
+            1. Using your knowledge and the provided URL, identify the main topic/content.
+            2. Extract 5-7 Key Moments or major points covered in the video.
+            3. Provide deep insights into the technical/narrative content.
+            4. If you cannot access specific details, provide high-quality general insights based on the video's context.
 
-                1. Extraction Guidelines
-                Narrative Arcs: Identify the 3-5 main "acts" or chapters of the video.
-                Gold Nuggets: Extract exact quotes that are provocative, counter-intuitive, or highly emotional.
-                Data & Entities: Capture all specific numbers, names of people/tools, and unique frameworks mentioned.
-                Visual Cues: Describe the visual "vibe" and specific scenes that would make compelling social media images or thumbnails.
-
-                2. Output Format (STRICT JSON ONLY)
-                Return only a valid JSON object. Do not include prose, intro text, or markdown formatting outside the JSON block.
-                JSON Structure:
-                {
-                "metadata": {
-                    "title": "Extracted Title",
-                    "tone": "e.g., Authoritative, Enthusiastic, Controversial",
-                    "target_audience": "e.g., SaaS Founders, Personal Growth Enthusiasts"
-                },
-                "semantic_core": {
-                    "key_takeaways": [
-                    {"point": "Main Idea", "supporting_detail": "Explanation from video"}
-                    ],
-                    "gold_nuggets": [
-                    {"quote": "Direct quote here", "context": "Why this matters"}
-                    ],
-                    "frameworks_or_entities": {
-                    "named_entities": ["Person A", "Tool B", "Company C"],
-                    "proprietary_methods": ["The XYZ Method", "3-Step Growth Framework"]
-                    }
-                },
-                "visual_brief": {
-                    "aesthetic": "e.g., Minimalist tech, vibrant energetic, dark/moody studio",
-                    "image_prompts": [
-                    "A high-quality image of [Subject] doing [Action] in [Setting], cinematic lighting."
-                    ]
-                },
-                "content_hooks": {
-                    "thread_opener": "The most controversial hook extracted from the video.",
-                    "linkedin_hook": "The professional/business-value hook."
+            Return a STRICT JSON object:
+            {
+                "transcript": "Details extracted from the video content...", 
+                "keyMoments": [
+                    { "time": "MM:SS", "description": "..." }
+                ],
+                "insights": {
+                    "summary": "",
+                    "coreTakeaway": "",
+                    "techStack": []
                 }
-                }
-                `;
+            }
+        `;
 
         const response = await ai.models.generateContent({
-            model: "gemini-2.0-flash-exp",
-            contents: [
-                {
-                    fileData: {
-                        fileUri: url,
-                    },
-                },
-                { text: orchestratorPrompt }
-            ],
-            config: {
-                responseMimeType: "application/json",
-            }
+            model: "gemini-2.0-flash",
+            contents: [{ role: "user", parts: [{ text: extractionPrompt }] }],
+            config: { responseMimeType: "application/json", temperature: 0 }
         });
 
-        const text = response.text;
+        if (!response.text) throw new Error("Failed to get response from Gemini");
+        const aiResult = JSON.parse(response.text);
 
-        return NextResponse.json({ text });
+        return NextResponse.json({
+            transcript: aiResult.transcript || "Information extracted from video URL.",
+            keyMoments: aiResult.keyMoments || [],
+            insights: aiResult.insights || {},
+            fullContent: `YouTube Video: ${url}\n\n${aiResult.transcript || ''}`
+        });
 
     } catch (error: any) {
-        console.error("Error in YouTube direct summary:", error);
-        return NextResponse.json(
-            { error: error.message || "Failed to process video" },
-            { status: 500 }
-        );
+        console.error("Error in YouTube Direct Source Agent:", error);
+        return NextResponse.json({ error: error.message || "Failed to process YouTube video" }, { status: 500 });
     }
 }
