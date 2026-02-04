@@ -57,26 +57,38 @@ export function TwitterPlayground({
 
     return (
         <div className="flex-1 flex flex-col max-w-6xl mx-auto w-full gap-8 h-full overflow-hidden">
-            <div className="flex items-center justify-between shrink-0">
-                <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2 py-0.5 bg-blue-100 text-blue-600 text-[10px] font-black rounded-md uppercase tracking-wider">Project</span>
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{projectName}</span>
-                    </div>
-                    <h1 className="text-3xl font-black text-[#1A1A1A] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#1DA1F2] to-[#0081FB]">TWITTER ENGINE</h1>
-                </div>
+            <div className="flex items-center justify-between shrink-0 mb-4 bg-gray-50/50 p-4 rounded-[24px]">
                 <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-[#1DA1F2] text-white flex items-center justify-center">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 className="text-sm font-black text-[#1A1A1A] tracking-widest uppercase mb-0.5">Twitter Agent</h2>
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">System Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-6">
+                    <div className="flex flex-col items-end">
+                        <span className="text-[10px] font-black text-[#1DA1F2] uppercase tracking-widest mb-0.5">Active Project</span>
+                        <h3 className="text-sm font-bold text-[#1A1A1A] tracking-tight truncate max-w-[200px]">{projectName}</h3>
+                    </div>
                     <button
                         onClick={handleGenerate}
                         disabled={activeLoading || sources.length === 0}
-                        className="px-8 py-3 bg-[#1DA1F2] text-white rounded-full font-bold shadow-xl hover:scale-105 transition-all disabled:opacity-50 flex items-center gap-2"
+                        className="px-6 py-2.5 bg-[#1DA1F2] text-white rounded-xl font-bold text-xs shadow-lg shadow-[#1DA1F2]/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center gap-2"
                     >
                         {activeLoading ? (
-                            <>
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                Agent is Processing...
-                            </>
-                        ) : 'Commence Thread Generation'}
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        )}
+                        <span>{activeLoading ? 'Processing...' : 'Generate Thread'}</span>
                     </button>
                 </div>
             </div>

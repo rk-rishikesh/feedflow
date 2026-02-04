@@ -34,6 +34,7 @@ export async function POST(req: Request) {
 
             Return a STRICT JSON object:
             {
+                "title": "The exact title of the YouTube video",
                 "transcript": "Details extracted from the video content...", 
                 "keyMoments": [
                     { "time": "MM:SS", "description": "..." }
@@ -56,6 +57,7 @@ export async function POST(req: Request) {
         const aiResult = JSON.parse(response.text);
 
         return NextResponse.json({
+            title: aiResult.title || "YouTube Video",
             transcript: aiResult.transcript || "Information extracted from video URL.",
             keyMoments: aiResult.keyMoments || [],
             insights: aiResult.insights || {},

@@ -63,6 +63,7 @@ export async function POST(req: Request) {
                 SOURCES:
                 ${processedSources.map(s => `- [${s.type.toUpperCase()}] ${s.title || s.url}`).join('\n')}
                 
+                REQUIREMENT: Use Title Case (e.g., "The Future of AI"). Do not use all caps or all lowercase.
                 Respond with ONLY the project name.
             `;
 

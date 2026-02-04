@@ -39,6 +39,7 @@ export async function POST(req: Request) {
             
             Return a STRICT JSON object:
             {
+                "title": "The exact project name or title",
                 "insights": {
                     "summary": "...", 
                     "coreTakeaway": "...",
@@ -64,6 +65,7 @@ export async function POST(req: Request) {
         const aiResult = JSON.parse(response.text);
 
         return NextResponse.json({
+            title: aiResult.title || "GitHub Repository",
             fullContent,
             insights: aiResult.insights,
             keyMoments: aiResult.keyMoments || [],

@@ -57,26 +57,40 @@ export function DigestPlayground({
 
     return (
         <div className="flex-1 flex flex-col max-w-6xl mx-auto w-full gap-8 h-full overflow-hidden">
-            <div className="flex items-center justify-between shrink-0">
-                <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-600 text-[10px] font-black rounded-md uppercase tracking-wider">Project</span>
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{projectName}</span>
+            <div className="flex items-center justify-between shrink-0 mb-4 bg-emerald-50/30 p-4 rounded-[24px] border border-emerald-100">
+                <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-600/20">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
                     </div>
-                    <h1 className="text-3xl font-black text-[#1A1A1A] tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">DIGEST STUDIO</h1>
+                    <div>
+                        <h2 className="text-sm font-black text-[#1A1A1A] tracking-widest uppercase mb-0.5">Digest Agent</h2>
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">System Active</span>
+                        </div>
+                    </div>
                 </div>
-                <button
-                    onClick={handleGenerate}
-                    disabled={activeLoading || sources.length === 0}
-                    className="px-8 py-3 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-full font-bold shadow-xl hover:scale-105 transition-all disabled:opacity-50 flex items-center gap-2"
-                >
-                    {activeLoading ? (
-                        <>
+
+                <div className="flex items-center gap-6">
+                    <div className="flex flex-col items-end">
+                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-0.5">Active Project</span>
+                        <h3 className="text-sm font-bold text-[#1A1A1A] tracking-tight truncate max-w-[200px]">{projectName}</h3>
+                    </div>
+                    <button
+                        onClick={handleGenerate}
+                        disabled={activeLoading || sources.length === 0}
+                        className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-500 text-white rounded-xl font-bold text-xs shadow-lg shadow-emerald-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center gap-2"
+                    >
+                        {activeLoading ? (
                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            Agent is Synthesizing...
-                        </>
-                    ) : 'Generate High-Density Digest'}
-                </button>
+                        ) : (
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        )}
+                        <span>{activeLoading ? 'Synthesizing...' : 'Generate Digest'}</span>
+                    </button>
+                </div>
             </div>
 
             <div className="grid grid-cols-12 gap-8 flex-1 overflow-hidden">
