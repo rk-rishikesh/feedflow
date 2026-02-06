@@ -49,6 +49,7 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
 
     const [imageContent, setImageContent] = useState(initialContent?.imageContent || '');
     const [imageThoughts, setImageThoughts] = useState<Thought[]>(initialContent?.imageThoughts || (initialContent?.imageThoughtProcess ? [{ id: 'init', type: 'initial', text: initialContent.imageThoughtProcess, timestamp: new Date().toISOString() }] : []));
+    const [imageBase64, setImageBase64] = useState(initialContent?.imageBase64 || '');
 
     const [knowledgeContext, setKnowledgeContext] = useState<any>(initialContent?.knowledgeContext || null);
 
@@ -174,6 +175,8 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                     summaryContent: '',
                     summaryThoughtProcess: '',
                     imageContent: '',
+                    imageThoughts: [],
+                    imageBase64: '',
                     imageThoughtProcess: ''
                 };
 
@@ -272,6 +275,7 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                 case 'image':
                     setImageContent(data.updatedContent);
                     setImageThoughts(prev => [...prev, newThought]);
+                    if (data.imageBase64) setImageBase64(data.imageBase64);
                     break;
             }
 
@@ -292,13 +296,13 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                 linkedinContent, linkedinThoughts,
                 blogContent, blogTitle, blogMetadata, blogThoughts,
                 summaryContent, summaryThoughts,
-                imageContent, imageThoughts,
+                imageContent, imageThoughts, imageBase64,
                 content: draftContent,
                 sources,
                 knowledgeContext
             });
         }
-    }, [twitterContent, twitterThoughts, linkedinContent, linkedinThoughts, blogContent, blogTitle, blogMetadata, blogThoughts, summaryContent, summaryThoughts, imageContent, imageThoughts, draftContent, sources]);
+    }, [twitterContent, twitterThoughts, linkedinContent, linkedinThoughts, blogContent, blogTitle, blogMetadata, blogThoughts, summaryContent, summaryThoughts, imageContent, imageThoughts, imageBase64, draftContent, sources]);
 
     return (
         <div className="flex h-screen bg-[#FFFFFF] relative overflow-hidden">
@@ -306,8 +310,8 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
 
             <div className="flex-1 flex flex-col overflow-hidden pl-32">
                 <div className="flex-1 flex overflow-hidden">
-                    <div className="flex-1 flex flex-col overflow-hidden bg-[#FFFFFF]">
-                        <div className="flex-1 flex flex-col overflow-hidden p-8">
+                    <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-[#FFFFFF]">
+                        <div className="flex-1 flex flex-col min-h-0 overflow-hidden p-8">
                             {activeTab === 'twitter' && (
                                 <TwitterPlayground
                                     sources={sources}
@@ -361,6 +365,8 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                                     sources={sources}
                                     draftContent={imageContent}
                                     setDraftContent={setImageContent}
+                                    imageBase64={imageBase64}
+                                    setImageBase64={setImageBase64}
                                     thoughts={imageThoughts}
                                     setThoughts={setImageThoughts}
                                     knowledgeContext={knowledgeContext}

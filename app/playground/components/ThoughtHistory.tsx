@@ -1,5 +1,6 @@
 import { Thought } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
 
 interface ThoughtHistoryProps {
     thoughts: Thought[];
@@ -75,9 +76,9 @@ export function ThoughtHistory({
                                         </div>
                                     )}
 
-                                    <p className="text-sm text-[#475569] leading-relaxed">
-                                        {thought.text}
-                                    </p>
+                                    <div className="text-sm text-[#475569] leading-relaxed markdown-content">
+                                        <ReactMarkdown>{thought.text}</ReactMarkdown>
+                                    </div>
 
                                     <div className="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between">
                                         <div className="flex items-center gap-2 text-[9px] font-black text-slate-400 uppercase tracking-tighter">
@@ -104,8 +105,28 @@ export function ThoughtHistory({
             </div>
 
             <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar { display: none; }
-                .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+                .custom-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                .custom-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+                .markdown-content strong {
+                    font-weight: 800;
+                    color: #1A1A1A;
+                }
+                .markdown-content em {
+                    font-style: italic;
+                    opacity: 0.9;
+                }
+                .markdown-content ul, .markdown-content ol {
+                    margin-left: 1rem;
+                    margin-top: 0.5rem;
+                }
+                .markdown-content li {
+                    margin-bottom: 0.25rem;
+                }
             `}</style>
         </div>
     );

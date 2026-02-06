@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SavedContent, Source } from '../../playground/types';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 interface MainFeedProps {
     contentItems: SavedContent[];
@@ -63,7 +64,6 @@ export default function MainFeed({ contentItems, getContentDetails, getSourceIco
                                 {/* List Items */}
                                 <div className="divide-y divide-[#F2F2F2]">
                                     {contentItems.map((item) => {
-                                        const { displayTitle } = getContentDetails(item.content, item.title);
                                         return (
                                             <div
                                                 key={item.id}
@@ -76,10 +76,7 @@ export default function MainFeed({ contentItems, getContentDetails, getSourceIco
                                                     </div>
                                                     <div className="flex flex-col min-w-0">
                                                         <span className="text-sm font-bold text-[#2B2B2B] truncate max-w-[400px]">
-                                                            {displayTitle}
-                                                        </span>
-                                                        <span className="text-[10px] text-[#A3A3A3] font-medium uppercase tracking-tight">
-                                                            {item.platform || 'Project'}
+                                                            {item.knowledgeContext.projectName}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -120,20 +117,46 @@ export default function MainFeed({ contentItems, getContentDetails, getSourceIco
                                 </div>
                             </div>
                         ) : (
-                            <div className="text-center py-24 bg-[#F9F9F9] rounded-[2.5rem] border border-dashed border-[#D4D4D4]">
-                                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
-                                    <svg className="w-8 h-8 text-[#D4D4D4]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                    </svg>
-                                </div>
-                                <p className="text-[#6B6B6B] text-lg font-bold mb-2">Your library is empty</p>
-                                <p className="text-[#A3A3A3] text-sm mb-8">Start generating content to see it appear here.</p>
-                                <button
-                                    onClick={() => router.push('/playground')}
-                                    className="px-8 py-3 bg-[#2B2B2B] text-white rounded-full text-sm font-bold hover:bg-black transition-all shadow-lg shadow-black/5"
+                            <div className="flex-1 flex flex-col items-center justify-center py-32 text-center">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.8, ease: "easeOut" }}
+                                    className="relative w-64 h-64 mb-12 group"
                                 >
-                                    Start Creating
-                                </button>
+                                    <Image
+                                        src="/assets/characters/seven.svg"
+                                        alt="Empty Mascot"
+                                        fill
+                                        className="object-contain transition-transform duration-700 group-hover:scale-105 group-hover:rotate-2"
+                                        priority
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-white/80 to-transparent pointer-events-none" />
+                                </motion.div>
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.4, duration: 0.8 }}
+                                >
+                                    <h2 className="text-4xl font-black text-[#1A1A1A] mb-4 tracking-tighter">Your library is silent.</h2>
+                                    <p className="text-[#888888] max-w-[320px] mx-auto mb-12 font-bold uppercase text-[10px] tracking-[0.3em] leading-relaxed">
+                                        Architect your first knowledge graph to populate this feed.
+                                    </p>
+                                    <button
+                                        onClick={() => router.push('/playground')}
+                                        className="px-12 py-5 bg-[#1A1A1A] text-white rounded-full text-xs font-black uppercase tracking-[0.2em] hover:bg-black transition-all shadow-2xl shadow-black/10 active:scale-95 flex items-center gap-4 mx-auto group"
+                                    >
+                                        <span>Start Architecting</span>
+                                        <svg
+                                            className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                        </svg>
+                                    </button>
+                                </motion.div>
                             </div>
                         )}
                     </div>

@@ -36,7 +36,6 @@ export function SourceCard({
                     </div>
                     <div className="flex-1 min-w-0">
                         <h3 className="text-sm font-medium text-[#2B2B2B] truncate">{source.title}</h3>
-                        <p className="text-xs text-[#B3B3B3] truncate">{source.author || source.url}</p>
                     </div>
                     <button
                         onClick={(e) => {

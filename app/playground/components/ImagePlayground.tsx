@@ -41,6 +41,8 @@ interface ImagePlaygroundProps {
     sources: Source[];
     draftContent: string;
     setDraftContent: (content: string) => void;
+    imageBase64: string;
+    setImageBase64: (base64: string) => void;
     thoughts: Thought[];
     setThoughts: (thoughts: Thought[]) => void;
     knowledgeContext?: any;
@@ -51,6 +53,8 @@ export function ImagePlayground({
     sources,
     draftContent,
     setDraftContent,
+    imageBase64,
+    setImageBase64,
     thoughts,
     setThoughts,
     knowledgeContext,
@@ -73,13 +77,23 @@ export function ImagePlayground({
                 }),
             });
             const data = await res.json();
-            const parsed = JSON.parse(data.text);
-            setDraftContent(parsed.visual_prompt);
+            console.log("Image Agent Response Data:", {
+                hasThought: !!data.thoughtProcess,
+                hasPrompt: !!data.visual_prompt,
+                hasImage: !!data.imageBase64,
+                imagePrefix: data.imageBase64?.substring(0, 50)
+            });
+
+            // data now contains { thoughtProcess, visual_prompt, imageBase64 }
+            setDraftContent(data.visual_prompt);
+            if (data.imageBase64) {
+                setImageBase64(data.imageBase64);
+            }
 
             const newThought: Thought = {
                 id: Date.now().toString(),
                 type: 'initial',
-                text: parsed.thoughtProcess || '',
+                text: data.thoughtProcess || '',
                 timestamp: new Date().toISOString()
             };
             setThoughts([newThought]);
@@ -92,7 +106,7 @@ export function ImagePlayground({
 
     return (
         <div className="flex-1 flex flex-col max-w-6xl mx-auto w-full gap-8 h-full overflow-hidden">
-            <div className="flex items-center justify-between shrink-0 mb-4 bg-purple-50/30 p-4">
+            <div className="flex items-center justify-between shrink-0 mb-4 bg-purple-50/30 p-4 rounded-3xl">
                 <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 text-white flex items-center justify-center shadow-lg shadow-purple-600/20">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,13 +116,16 @@ export function ImagePlayground({
                     <div>
                         <h2 className="text-sm font-black text-[#1A1A1A] tracking-widest uppercase mb-0.5">Visual Agent</h2>
                         <div className="flex items-center gap-1.5">
-                            <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">System Active</span>
+                            <div className={`w-1.5 h-1.5 rounded-full ${activeLoading ? 'bg-amber-500 animate-ping' : 'bg-purple-500 animate-pulse'}`} />
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                                {activeLoading ? 'Generating...' : 'System Active'}
+                            </span>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-4">
+                    <div className="h-8 w-[1px] bg-purple-200/50 mx-2" />
                     <div className="flex flex-col items-end">
                         <span className="text-[10px] font-black text-purple-600 uppercase tracking-widest mb-0.5">Active Project</span>
                         <h3 className="text-sm font-bold text-[#1A1A1A] tracking-tight truncate max-w-[200px]">{projectName}</h3>
@@ -116,7 +133,7 @@ export function ImagePlayground({
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-8 flex-1 overflow-hidden">
+            <div className="grid grid-cols-12 gap-8 flex-1 min-h-0">
                 {/* Left: Agent Thought Process History */}
                 <div className="col-span-5 flex flex-col overflow-hidden">
                     <ThoughtHistory
@@ -128,9 +145,9 @@ export function ImagePlayground({
                 </div>
 
                 {/* Right: Canvas */}
-                <div className="col-span-7 flex flex-col h-full">
+                <div className="col-span-7 flex flex-col min-h-0">
                     <h3 className="text-xs font-bold text-[#1A1A1A] uppercase tracking-widest mb-2 px-2 shrink-0">Visual Brief Preview</h3>
-                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 space-y-4">
+                    <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-4 space-y-4">
 
                         {!draftContent && !activeLoading && (
                             <div className="relative">
@@ -168,17 +185,42 @@ export function ImagePlayground({
                         )}
 
                         {draftContent && (
-                            <div className="bg-white rounded-[32px] overflow-hidden">
-                                <div className="p-12 text-center">
-                                    <div className="w-full aspect-video bg-slate-50 rounded-[24px] flex items-center justify-center border-2 border-dashed border-slate-200 mb-6">
-                                        <span className="text-4xl opacity-30">🖼️</span>
+                            <div className="bg-white overflow-hidden group">
+                                <div className="p-0">
+                                    <div className="w-full aspect-square rounded-[24px] flex items-center justify-center border border-slate-100 overflow-hidden relative">
+                                        {imageBase64 ? (
+                                            <>
+                                                <img
+                                                    src={imageBase64.startsWith('data:image') ? imageBase64 : `data:image/png;base64,${imageBase64}`}
+                                                    alt="AI Generated Visual"
+                                                    className="w-full h-full object-cover animate-in fade-in zoom-in-95 duration-1000"
+                                                />
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                                                    <a
+                                                        href={imageBase64.startsWith('data:image') ? imageBase64 : `data:image/png;base64,${imageBase64}`}
+                                                        download="generated-visual.png"
+                                                        className="p-4 bg-white rounded-full text-black hover:scale-110 transition-transform shadow-xl"
+                                                        title="Download Image"
+                                                    >
+                                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                        </svg>
+                                                    </a>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="flex flex-col items-center gap-4">
+                                                <div className="relative">
+                                                    <div className="w-16 h-16 rounded-full border-4 border-purple-500/20 border-t-purple-500 animate-spin" />
+                                                    <span className="absolute inset-0 flex items-center justify-center text-2xl">🎨</span>
+                                                </div>
+                                                <div className="flex flex-col items-center">
+                                                    <span className="text-xs font-black text-slate-800 uppercase tracking-widest animate-pulse">Synthesizing Masterpiece</span>
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-1">Multimodal Handshake in progress...</span>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                    <textarea
-                                        value={draftContent}
-                                        onChange={(e) => setDraftContent(e.target.value)}
-                                        placeholder="Architectural visual brief will generate here..."
-                                        className="w-full resize-none border-none outline-none text-[#1A1A1A] text-center text-lg leading-relaxed bg-transparent font-medium min-h-[150px]"
-                                    />
                                 </div>
                             </div>
                         )}
@@ -187,8 +229,13 @@ export function ImagePlayground({
             </div>
 
             <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar { display: none; }
-                .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+                .custom-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                .custom-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
             `}</style>
         </div>
     );

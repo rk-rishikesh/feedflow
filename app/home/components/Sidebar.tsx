@@ -21,7 +21,7 @@ export default function Sidebar() {
 
                 <div className="space-y-4 mb-10">
                     <h2 className="text-4xl font-black text-[#2B2B2B] tracking-tight">
-                        Hi Shreyas!
+                        Hi Rizzler!
                     </h2>
                     <p className="text-sm text-[#666666] leading-relaxed max-w-[240px] mx-auto">
                         Welcome home. Your specialized AI agents are ready to help you architect your next feed.
@@ -40,7 +40,7 @@ export default function Sidebar() {
 
                 <div className="mt-12 flex items-center gap-3 text-[10px] font-bold text-[#D4D4D4] uppercase tracking-widest">
                     <span className="w-8 h-[1px] bg-[#F0F0F0]" />
-                    Feed Flow Studio
+                    Rizz Network Studio
                     <span className="w-8 h-[1px] bg-[#F0F0F0]" />
                 </div>
             </div>

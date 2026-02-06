@@ -39,6 +39,7 @@ export interface SavedContent {
     summaryThoughts?: Thought[];
     imageContent?: string;
     imageThoughts?: Thought[];
+    imageBase64?: string;
     knowledgeContext?: any;
     // Keep old fields for backward compatibility during migration if needed
     twitterThoughtProcess?: string;

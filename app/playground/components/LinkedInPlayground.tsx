@@ -113,7 +113,7 @@ export function LinkedInPlayground({
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-8 flex-1 overflow-hidden">
+            <div className="grid grid-cols-12 gap-8 flex-1 min-h-0">
                 {/* Left: Agent Thought Process History */}
                 <div className="col-span-5 flex flex-col overflow-hidden">
                     <ThoughtHistory
@@ -125,9 +125,9 @@ export function LinkedInPlayground({
                 </div>
 
                 {/* Right: Preview */}
-                <div className="col-span-7 flex flex-col h-full">
+                <div className="col-span-7 flex flex-col min-h-0">
                     <h3 className="text-xs font-bold text-[#1A1A1A] uppercase tracking-widest mb-2 px-2 opacity-50 shrink-0">LinkedIn Post Preview</h3>
-                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 pb-20 space-y-4">
+                    <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-4 pb-20 space-y-4">
                         <div className="max-w-[680px] mx-auto w-full space-y-4">
 
                             {!draftContent && !activeLoading && (
@@ -247,8 +247,13 @@ export function LinkedInPlayground({
             </div>
 
             <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar { display: none; }
-                .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+                .custom-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                .custom-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
             `}</style>
         </div>
     );

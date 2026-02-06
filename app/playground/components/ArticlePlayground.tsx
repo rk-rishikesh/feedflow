@@ -123,7 +123,7 @@ export function ArticlePlayground({
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-8 flex-1 overflow-hidden">
+            <div className="grid grid-cols-12 gap-8 flex-1 min-h-0">
                 {/* Left: Agent Thought Process History */}
                 <div className="col-span-5 flex flex-col overflow-hidden">
                     <ThoughtHistory
@@ -135,9 +135,9 @@ export function ArticlePlayground({
                 </div>
 
                 {/* Right: Preview */}
-                <div className="col-span-7 flex flex-col h-full">
+                <div className="col-span-7 flex flex-col min-h-0">
                     <h3 className="text-xs font-bold text-[#1A1A1A] uppercase tracking-widest mb-2 px-2 shrink-0">Article Preview</h3>
-                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 space-y-4">
+                    <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-4 space-y-4">
 
                         {!draftContent && !activeLoading && (
                             <div className="relative">
@@ -205,8 +205,17 @@ export function ArticlePlayground({
                                         {draftContent.split(' ').length} WORDS · {draftContent.length} CHARS
                                     </div>
                                     <div className="flex gap-3">
-                                        <button className="px-6 py-2 bg-white border border-[#E5E5E5] rounded-full text-xs font-bold hover:bg-[#F5F5F5] transition-all">Copy Markdown</button>
-                                        <button className="px-6 py-2 bg-[#1A1A1A] text-white rounded-full text-xs font-bold hover:shadow-lg transition-all">Publish</button>
+                                        <button
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(draftContent);
+                                            }}
+                                            className="p-3 bg-white border border-[#E5E5E5] rounded-full hover:bg-slate-50 transition-all group"
+                                            title="Copy Markdown"
+                                        >
+                                            <svg className="w-4 h-4 text-[#1A1A1A] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                            </svg>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -216,8 +225,13 @@ export function ArticlePlayground({
             </div>
 
             <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar { display: none; }
-                .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+                .custom-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                .custom-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
             `}</style>
         </div>
     );
