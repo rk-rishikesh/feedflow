@@ -1,6 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Source, Thought } from '../types';
 import { ThoughtHistory } from './ThoughtHistory';
+
+function TweetSkeleton({ showLine = false }: { showLine?: boolean }) {
+    return (
+        <div className="bg-white rounded-[32px] p-6 border border-gray-100 shadow-sm overflow-hidden relative group">
+            <div className="flex gap-4 relative">
+                {showLine && (
+                    <div className="absolute left-[23px] top-12 bottom-[-32px] w-0.5 bg-slate-100/50" />
+                )}
+                <div className="w-12 h-12 rounded-full bg-slate-100 shrink-0 relative z-10" />
+                <div className="flex-1 space-y-3">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <div className="h-4 w-24 bg-slate-100 rounded-md" />
+                            <div className="h-3 w-32 bg-slate-50 rounded-md" />
+                        </div>
+                        <div className="flex gap-1">
+                            <div className="w-1 h-1 rounded-full bg-slate-100" />
+                            <div className="w-1 h-1 rounded-full bg-slate-100" />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <div className="h-3.5 w-full bg-slate-100 rounded-md" />
+                        <div className="h-3.5 w-full bg-slate-100 rounded-md" />
+                        <div className="h-3.5 w-4/5 bg-slate-50 rounded-md" />
+                    </div>
+                    <div className="pt-2 flex gap-6">
+                        <div className="h-3 w-8 bg-slate-50 rounded-md" />
+                        <div className="h-3 w-8 bg-slate-50 rounded-md" />
+                        <div className="h-3 w-8 bg-slate-50 rounded-md" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 interface TwitterPlaygroundProps {
     sources: Source[];
@@ -55,17 +90,26 @@ export function TwitterPlayground({
 
     const tweets = draftContent.split(/\n\n---\n\n/).map(t => t.trim()).filter(Boolean);
 
+    // Auto-resize textareas when tweets change
+    useEffect(() => {
+        const textareas = document.querySelectorAll('textarea');
+        textareas.forEach((textarea) => {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        });
+    }, [tweets]);
+
     return (
         <div className="flex-1 flex flex-col max-w-6xl mx-auto w-full gap-8 h-full overflow-hidden">
             <div className="flex items-center justify-between shrink-0 mb-4 bg-gray-50/50 p-4 rounded-[24px]">
                 <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-[#1DA1F2] text-white flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center shadow-lg shadow-black/20">
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+                            <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932L18.901 1.153ZM17.61 20.644h2.039L6.486 3.24H4.298L17.61 20.644Z" />
                         </svg>
                     </div>
                     <div>
-                        <h2 className="text-sm font-black text-[#1A1A1A] tracking-widest uppercase mb-0.5">Twitter Agent</h2>
+                        <h2 className="text-sm font-black text-[#1A1A1A] tracking-widest uppercase mb-0.5">X Agent</h2>
                         <div className="flex items-center gap-1.5">
                             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">System Active</span>
@@ -75,21 +119,9 @@ export function TwitterPlayground({
 
                 <div className="flex items-center gap-6">
                     <div className="flex flex-col items-end">
-                        <span className="text-[10px] font-black text-[#1DA1F2] uppercase tracking-widest mb-0.5">Active Project</span>
+                        <span className="text-[10px] font-black text-black uppercase tracking-widest mb-0.5">Active Project</span>
                         <h3 className="text-sm font-bold text-[#1A1A1A] tracking-tight truncate max-w-[200px]">{projectName}</h3>
                     </div>
-                    <button
-                        onClick={handleGenerate}
-                        disabled={activeLoading || sources.length === 0}
-                        className="px-6 py-2.5 bg-[#1DA1F2] text-white rounded-xl font-bold text-xs shadow-lg shadow-[#1DA1F2]/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center gap-2"
-                    >
-                        {activeLoading ? (
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                        )}
-                        <span>{activeLoading ? 'Processing...' : 'Generate Thread'}</span>
-                    </button>
                 </div>
             </div>
 
@@ -99,54 +131,80 @@ export function TwitterPlayground({
                     <ThoughtHistory
                         thoughts={thoughts}
                         isLoading={activeLoading}
-                        accentColor="#1DA1F2"
+                        accentColor="#000000"
                     />
                 </div>
 
                 {/* Right: Preview */}
-                <div className="col-span-7 overflow-y-auto custom-scrollbar pr-4 space-y-4">
-                    <h3 className="text-xs font-bold text-[#1A1A1A] uppercase tracking-widest mb-2 px-2">Final Output Thread</h3>
-                    {tweets.length === 0 && !activeLoading && (
-                        <div className="h-full flex items-center justify-center border-2 border-dashed border-[#E5E5E5] rounded-[40px] bg-gray-50 p-12 text-center text-gray-400">
-                            The agent's output will materialize here.
-                        </div>
-                    )}
-
-                    {activeLoading && tweets.length === 0 && (
-                        <div className="space-y-4 animate-pulse">
-                            {[1, 2, 3].map(i => (
-                                <div key={i} className="bg-gray-50 border border-gray-100 rounded-[32px] p-6 h-32" />
-                            ))}
-                        </div>
-                    )}
-
-                    {tweets.map((tweet, idx) => (
-                        <div key={idx} className="bg-white rounded-[32px] p-6 transition-all relative">
-                            <div className="flex gap-4">
-                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1DA1F2] to-[#0081FB] shrink-0" />
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="font-bold text-[#1A1A1A]">X Agent</span>
-                                        <span className="text-gray-400 text-sm">@feedflow_ai · {idx + 1}/{tweets.length}</span>
+                <div className="col-span-7 flex flex-col h-full">
+                    <h3 className="text-xs font-bold text-[#1A1A1A] uppercase tracking-widest mb-2 px-2 shrink-0">Final Output Thread</h3>
+                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 space-y-4">
+                        {tweets.length === 0 && !activeLoading && (
+                            <div className="relative">
+                                <div className="space-y-4 opacity-[0.3] pointer-events-none select-none">
+                                    <TweetSkeleton showLine={true} />
+                                    <TweetSkeleton showLine={true} />
+                                    <TweetSkeleton />
+                                </div>
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-auto">
+                                    <div className="bg-white/95 px-8 py-6">
+                                        <button
+                                            onClick={handleGenerate}
+                                            disabled={activeLoading || sources.length === 0}
+                                            className="px-8 py-4 bg-black text-white rounded-2xl font-bold text-sm shadow-lg shadow-black/30 hover:scale-[1.05] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+                                        >
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                            </svg>
+                                            <span>Generate X Thread</span>
+                                        </button>
+                                        <p className="text-[10px] text-gray-400 text-center mt-3 font-medium">
+                                            {sources.length === 0 ? 'Add sources to get started' : 'Click to generate your thread'}
+                                        </p>
                                     </div>
-                                    <textarea
-                                        value={tweet}
-                                        onChange={(e) => {
-                                            const newTweets = [...tweets];
-                                            newTweets[idx] = e.target.value;
-                                            setDraftContent(newTweets.join('\n\n---\n\n'));
-                                        }}
-                                        className="w-full h-auto resize-none border-none outline-none text-[#1A1A1A] text-lg leading-snug bg-transparent"
-                                        onInput={(e) => {
-                                            const target = e.target as HTMLTextAreaElement;
-                                            target.style.height = 'auto';
-                                            target.style.height = target.scrollHeight + 'px';
-                                        }}
-                                    />
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        )}
+
+                        {activeLoading && tweets.length === 0 && (
+                            <div className="space-y-4 animate-pulse">
+                                <TweetSkeleton showLine={true} />
+                                <TweetSkeleton showLine={true} />
+                                <TweetSkeleton />
+                            </div>
+                        )}
+
+                        {tweets.map((tweet, idx) => (
+                            <div key={idx} className="bg-white rounded-[32px] p-6 transition-all relative">
+                                {idx < tweets.length - 1 && (
+                                    <div className="absolute left-[47px] top-[72px] bottom-[-24px] w-0.5 bg-gray-100" />
+                                )}
+                                <div className="flex gap-4 relative z-10">
+                                    <div className={`w-12 h-12 rounded-full shrink-0 ${idx === 0 ? 'bg-gradient-to-br from-[#1DA1F2] to-[#0081FB]' : 'bg-gray-100'}`} />
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="font-bold text-[#1A1A1A]">X Agent</span>
+                                            <span className="text-gray-400 text-sm">@feedflow_ai · {idx + 1}/{tweets.length}</span>
+                                        </div>
+                                        <textarea
+                                            value={tweet}
+                                            onChange={(e) => {
+                                                const newTweets = [...tweets];
+                                                newTweets[idx] = e.target.value;
+                                                setDraftContent(newTweets.join('\n\n---\n\n'));
+                                            }}
+                                            className="w-full h-auto resize-none border-none outline-none text-[#1A1A1A] text-lg leading-snug bg-transparent"
+                                            onInput={(e) => {
+                                                const target = e.target as HTMLTextAreaElement;
+                                                target.style.height = 'auto';
+                                                target.style.height = target.scrollHeight + 'px';
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
 

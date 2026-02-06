@@ -93,8 +93,7 @@ export function ThoughtHistory({
                             </motion.div>
                         ))
                     ) : !isLoading && (
-                        <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-[32px] p-12 text-center">
-                            <div className="text-4xl mb-4 opacity-20">{emptyIcon}</div>
+                        <div className="pt-4 text-left">
                             <p className="text-sm text-slate-400 font-medium italic">
                                 {emptyText} <br />
                                 Thinking will appear here after generation.

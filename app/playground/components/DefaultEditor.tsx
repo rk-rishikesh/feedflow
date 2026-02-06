@@ -31,7 +31,7 @@ export function DefaultEditor({ draftContent, setDraftContent, isGenerating, kno
                     className="relative w-64 h-64 mb-8 grayscale"
                 >
                     <Image
-                        src="/assets/characters/one.svg"
+                        src="/assets/characters/five.svg"
                         alt="Agent Mascot"
                         fill
                         className="object-contain"
@@ -51,7 +51,7 @@ export function DefaultEditor({ draftContent, setDraftContent, isGenerating, kno
             <div className="flex-1 flex flex-col items-center justify-center p-12 text-center animate-in fade-in zoom-in duration-500">
                 <div className="relative w-64 h-64 mb-8">
                     <Image
-                        src="/assets/characters/one.svg"
+                        src="/assets/characters/six.svg"
                         alt="Agent Mascot"
                         fill
                         className="object-contain"

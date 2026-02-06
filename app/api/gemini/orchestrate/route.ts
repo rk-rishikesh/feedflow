@@ -34,6 +34,9 @@ export async function POST(req: Request) {
                     case 'website':
                         data = await scrapeWebsite(source.url);
                         break;
+                    case 'text':
+                        data = { text: source.content || source.description || "" };
+                        break;
                     default:
                         data = { error: `Unsupported source type: ${source.type}` };
                         status = "error";

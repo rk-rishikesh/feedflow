@@ -26,6 +26,8 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
     const [expandedSource, setExpandedSource] = useState<number | null>(null);
     const [isAddingSource, setIsAddingSource] = useState(false);
     const [newSourceUrl, setNewSourceUrl] = useState('');
+    const [sourceInputMode, setSourceInputMode] = useState<'url' | 'text'>('url');
+    const [newSourceText, setNewSourceText] = useState('');
     const [currentSessionId, setCurrentSessionId] = useState<number | null>(initialContent?.id || null);
     const [isRefining, setIsRefining] = useState(false);
     const [refinementInstructions, setRefinementInstructions] = useState('');
@@ -74,31 +76,51 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
     };
 
     const handleCreateSource = () => {
-        const url = newSourceUrl.trim();
-        if (!url) return;
+        if (sourceInputMode === 'url') {
+            const url = newSourceUrl.trim();
+            if (!url) return;
 
-        const isYoutube = url.includes('youtube.com') || url.includes('youtu.be');
-        const isGithub = url.includes('github.com');
-        const isDoc = url.includes('docs.') || url.includes('/docs/') || url.includes('/documentation/');
+            const isYoutube = url.includes('youtube.com') || url.includes('youtu.be');
+            const isGithub = url.includes('github.com');
+            const isDoc = url.includes('docs.') || url.includes('/docs/') || url.includes('/documentation/');
 
-        let sourceType: SourceType = 'article';
-        if (isYoutube) sourceType = 'youtube';
-        else if (isGithub) sourceType = 'github';
-        else if (isDoc) sourceType = 'doc';
+            let sourceType: SourceType = 'article';
+            if (isYoutube) sourceType = 'youtube';
+            else if (isGithub) sourceType = 'github';
+            else if (isDoc) sourceType = 'doc';
 
-        const newSource: Source = {
-            id: Date.now(),
-            type: sourceType,
-            title: url,
-            url,
-            author: 'Unknown',
-            date: 'Just now',
-        };
+            const newSource: Source = {
+                id: Date.now(),
+                type: sourceType,
+                title: url,
+                url,
+                author: 'Unknown',
+                date: 'Just now',
+            };
 
-        const updatedSources = [newSource, ...sources];
-        updateSources(updatedSources);
-        setIsAddingSource(false);
-        setNewSourceUrl('');
+            const updatedSources = [newSource, ...sources];
+            updateSources(updatedSources);
+            setIsAddingSource(false);
+            setNewSourceUrl('');
+        } else {
+            const text = newSourceText.trim();
+            if (!text) return;
+
+            const newSource: Source = {
+                id: Date.now(),
+                type: 'text',
+                title: text.slice(0, 30) + (text.length > 30 ? '...' : ''),
+                url: 'n/a',
+                description: text,
+                author: 'Manual Entry',
+                date: 'Just now',
+            } as any; // Cast as any because Source might not have 'content' but we put it in description for now or add content to Source interface
+
+            const updatedSources = [newSource, ...sources];
+            updateSources(updatedSources);
+            setIsAddingSource(false);
+            setNewSourceText('');
+        }
     };
 
     const removeSource = (id: number) => {
@@ -360,9 +382,13 @@ export function PlaygroundView({ initialContent }: PlaygroundViewProps) {
                         sources={sources}
                         isAddingSource={isAddingSource}
                         newSourceUrl={newSourceUrl}
+                        newSourceText={newSourceText}
+                        sourceInputMode={sourceInputMode}
+                        setSourceInputMode={setSourceInputMode}
                         expandedSource={expandedSource}
                         activeTab={activeTab}
                         setNewSourceUrl={setNewSourceUrl}
+                        setNewSourceText={setNewSourceText}
                         setIsAddingSource={setIsAddingSource}
                         handleCreateSource={handleCreateSource}
                         addSource={() => setIsAddingSource(true)}

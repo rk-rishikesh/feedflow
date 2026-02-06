@@ -82,20 +82,24 @@ export function SourceCard({
 
                     {/* Content */}
                     <div className="px-5 pb-5 bg-[#FFFFFF] space-y-4">
-                        {source.description && (
-                            <p className="text-sm text-[#2B2B2B] leading-relaxed">{source.description}</p>
+                        {(source.description || source.content) && (
+                            <p className="text-sm text-[#2B2B2B] leading-relaxed">
+                                {source.description || source.content}
+                            </p>
                         )}
-                        <div className="flex items-center justify-between gap-3">
-                            <a
-                                href={source.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="text-sm text-[#2B2B2B] hover:text-[#2B2B2B]/80 truncate flex-1 underline"
-                            >
-                                {source.url}
-                            </a>
-                        </div>
+                        {source.type !== 'text' && (
+                            <div className="flex items-center justify-between gap-3">
+                                <a
+                                    href={source.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="text-sm text-[#2B2B2B] hover:text-[#2B2B2B]/80 truncate flex-1 underline"
+                                >
+                                    {source.url}
+                                </a>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

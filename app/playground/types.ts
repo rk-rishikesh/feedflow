@@ -1,4 +1,4 @@
-export type SourceType = 'youtube' | 'blog' | 'news' | 'tweet' | 'article' | 'github' | 'doc';
+export type SourceType = 'youtube' | 'blog' | 'news' | 'tweet' | 'article' | 'github' | 'doc' | 'text';
 
 export interface Source {
     id: number;

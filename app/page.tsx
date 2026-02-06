@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
   return (
-    <div className="min-h-screen bg-[#FFFFFF] p-4 lg:p-8">
-      <div className="max-w-7xl mx-auto min-h-screen flex flex-col">
+    <div className="min-h-screen bg-[#FFFFFF]">
+      <div className="max-w-7xl mx-auto p-4 lg:p-8 min-h-screen flex flex-col">
         {/* FEED FLOW Title */}
         <div className="flex justify-center pt-4">
-          <h1 className="font-bold text-[#2B2B2B] tracking-[0.01em] leading-none text-[200px]">
-            FEED FLOW
+          <h1 className="font-bold text-[#2B2B2B] tracking-[0.01em] leading-none text-[160px]">
+            RIZZ NETWORK
           </h1>
         </div>
 
@@ -29,8 +29,8 @@ export default function Home() {
           </div>
 
           {/* Text - Extreme Right */}
-          <div className="text-[#2B2B2B] text-base lg:text-lg xl:text-xl">
-            Stop drowning in YouTube transcripts. Our multi-layered AI funnel filters thousands of messages to surface brilliant ideas, market signals, and actionable insights in real-time.
+          <div className="text-[#2B2B2B] text-base lg:text-lg xl:text-xl font-medium leading-relaxed max-w-xl">
+            From YouTube transcripts and GitHub repos to complex PDFs. Our multi-agent orchestration layer filters the noise to pipeline high-signal intelligence into content with peak Rizz.
           </div>
         </div>
 
@@ -49,11 +49,11 @@ export default function Home() {
           </div>
 
           <div
-            className="bg-[#2B2B2B] rounded-full px-6 py-3 flex items-center gap-4 w-fit mb-8 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#2B2B2B]/30"
+            className="bg-[#2B2B2B] rounded-full px-6 py-3 flex items-center gap-4 w-fit mb-32 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#2B2B2B]/30"
             onClick={() => router.push('/home')}
           >
             <span className="text-white font-bold text-base lg:text-lg xl:text-xl transition-all duration-300">
-              Generate Your Post
+              Rizz My Sources
             </span>
             <button className="w-10 h-10 rounded-full border border-white flex items-center justify-center hover:bg-white/20 transition-all duration-300 group">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="transition-transform duration-300 group-hover:translate-x-1">
@@ -63,12 +63,112 @@ export default function Home() {
           </div>
 
         </div>
+
+        {/* Middle Section - How it Works */}
+        <div className="w-full py-32 px-11 relative overflow-hidden">
+          {/* Background Path (Dotted Line) */}
+          <div className="absolute top-[60%] left-0 w-full h-40 pointer-events-none opacity-20 hidden lg:block">
+            <svg width="100%" height="100%" viewBox="0 0 1200 120" fill="none" preserveAspectRatio="none">
+              <path
+                d="M0 60C150 60 150 10 300 10C450 10 450 110 600 110C750 110 750 10 900 10C1050 10 1050 60 1200 60"
+                stroke="#2B2B2B"
+                strokeWidth="2"
+                strokeDasharray="8 8"
+              />
+            </svg>
+          </div>
+
+          <div className="max-w-7xl mx-auto relative z-10">
+            <div className="text-center mb-24">
+              <h2 className="text-5xl font-black text-[#2B2B2B] tracking-tight mb-6">How it works</h2>
+              <p className="max-w-2xl mx-auto text-[#888888] font-medium leading-relaxed uppercase text-[10px] tracking-[0.4em]">
+                Your intelligence pipeline from raw noise to high-impact signals.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 relative">
+              {/* Step 1 */}
+              <div className="flex flex-col items-center text-center group">
+                <div className="w-full aspect-[4/3] bg-white border border-[#F0F0F0] rounded-[32px] mb-8 relative flex items-center justify-center overflow-hidden shadow-sm group-hover:shadow-xl transition-all duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative z-10 flex flex-col gap-2 w-3/4">
+                    <div className="h-6 w-full bg-[#F5F5F5] rounded-full animate-pulse" />
+                    <div className="h-6 w-2/3 bg-[#F0F0F0] rounded-full" />
+                    <div className="flex gap-2">
+                      <div className="h-8 w-8 bg-[#2B2B2B] rounded-lg shrink-0" />
+                      <div className="h-8 w-8 bg-[#E5E5E5] rounded-lg shrink-0" />
+                    </div>
+                  </div>
+                </div>
+                <h4 className="text-lg font-black text-[#2B2B2B] mb-2">Feed the Beast.</h4>
+                <p className="text-[10px] text-[#B3B3B3] font-bold uppercase tracking-widest leading-relaxed">
+                  Drop your links, PDFs, youtube videos <br />or github repositories.
+                </p>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex flex-col items-center text-center group lg:mt-16">
+                <div className="w-full aspect-[4/3] bg-white border border-[#F0F0F0] rounded-[32px] mb-8 relative flex items-center justify-center overflow-hidden shadow-sm group-hover:shadow-xl transition-all duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative z-10 grid grid-cols-2 gap-2 p-6 w-full">
+                    <div className="h-10 border border-[#F0F0F0] rounded-xl flex items-center justify-center text-[10px] font-black group-hover:bg-black group-hover:text-white transition-colors">X</div>
+                    <div className="h-10 border border-[#F0F0F0] rounded-xl flex items-center justify-center text-[10px] font-black group-hover:bg-black group-hover:text-white transition-colors">IN</div>
+                    <div className="h-10 border border-[#F0F0F0] rounded-xl flex items-center justify-center text-[10px] font-black group-hover:bg-black group-hover:text-white transition-colors">DOC</div>
+                    <div className="h-10 border border-[#F0F0F0] rounded-xl flex items-center justify-center text-[10px] font-black group-hover:bg-black group-hover:text-white transition-colors">IMG</div>
+                  </div>
+                </div>
+                <h4 className="text-lg font-black text-[#2B2B2B] mb-2">Pick the type.</h4>
+                <p className="text-[10px] text-[#B3B3B3] font-bold uppercase tracking-widest leading-relaxed">
+                  Choose from X, Linkedin,<br />Digest, Article, or Image
+                </p>
+              </div>
+
+              {/* Step 3 (New) */}
+              <div className="flex flex-col items-center text-center group">
+                <div className="w-full aspect-[4/3] bg-white border border-[#F0F0F0] rounded-[32px] mb-8 relative flex items-center justify-center overflow-hidden shadow-sm group-hover:shadow-xl transition-all duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative z-10 w-3/4 flex flex-col gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-blue-600" />
+                      <div className="h-3 w-1/2 bg-[#F5F5F5] rounded-full" />
+                    </div>
+                    <div className="p-3 bg-[#F9F9F9] rounded-2xl border border-[#F0F0F0]">
+                      <div className="h-2 w-full bg-[#E5E5E5] rounded-full mb-2" />
+                      <div className="h-2 w-3/4 bg-[#E5E5E5] rounded-full" />
+                    </div>
+                  </div>
+                </div>
+                <h4 className="text-lg font-black text-[#2B2B2B] mb-2">Refine content.</h4>
+                <p className="text-[10px] text-[#B3B3B3] font-bold uppercase tracking-widest leading-relaxed">
+                  Give instructions to<br />perfect your POV.
+                </p>
+              </div>
+
+              {/* Step 4 */}
+              <div className="flex flex-col items-center text-center group lg:mt-16">
+                <div className="w-full aspect-[4/3] bg-white border border-[#F0F0F0] rounded-[32px] mb-8 relative flex items-center justify-center overflow-hidden shadow-sm group-hover:shadow-xl transition-all duration-500">
+                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-5 transition-opacity" />
+                  <div className="relative w-3/4 space-y-2">
+                    <div className="h-4 w-full bg-[#2B2B2B] rounded shadow-lg shadow-black/20" />
+                    <div className="h-4 w-3/4 bg-[#2B2B2B] rounded" />
+                    <div className="h-4 w-1/2 bg-[#2B2B2B]/10 rounded" />
+                  </div>
+                </div>
+                <h4 className="text-lg font-black text-[#2B2B2B] mb-2">Get the Rizz.</h4>
+                <p className="text-[10px] text-[#B3B3B3] font-bold uppercase tracking-widest leading-relaxed">
+                  Watch your sources turn into<br />polished threads in seconds.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Section 2 */}
         <div className="w-full mt-16 px-4 lg:px-8">
           {/* Header Text */}
           <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#2B2B2B] mb-2 tracking-wide">
-              This is your Digital Twin that listens to industry leaders and curates a daily briefing of unique angles for your own content.
+              Your Intelligence Pipeline that reasons through repositories, transcripts, and docs to architect high-velocity content with peak Rizz.
             </h2>
           </div>
 
@@ -130,73 +230,30 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Section 3 - Footer */}
-        <footer className="w-full mt-24 py-12 px-4 lg:px-8 border-t border-[#D4D4D4]">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-8">
-              {/* Brand Section */}
-              <div className="text-center lg:text-left">
-                <h2 className="text-2xl lg:text-3xl font-bold text-[#2B2B2B] mb-2 tracking-wide">
-                  FEED FLOW
-                </h2>
-
-              </div>
-
-              {/* Links Section */}
-              <div className="flex flex-col lg:flex-row gap-6 lg:gap-12">
-                <div className="text-center lg:text-left">
-                  <h3 className="font-semibold text-[#2B2B2B] mb-3">Product</h3>
-                  <ul className="space-y-2 text-sm text-[#B3B3B3]">
-                    <li><a href="#" className="hover:text-[#2B2B2B] transition-colors">Features</a></li>
-                    <li><a href="#" className="hover:text-[#2B2B2B] transition-colors">Stories</a></li>
-                    <li><a href="#" className="hover:text-[#2B2B2B] transition-colors">Comics</a></li>
-                  </ul>
-                </div>
-                <div className="text-center lg:text-left">
-                  <h3 className="font-semibold text-[#2B2B2B] mb-3">Company</h3>
-                  <ul className="space-y-2 text-sm text-[#B3B3B3]">
-                    <li><a href="#" className="hover:text-[#2B2B2B] transition-colors">About</a></li>
-                    <li><a href="#" className="hover:text-[#2B2B2B] transition-colors">Blog</a></li>
-                    <li><a href="#" className="hover:text-[#2B2B2B] transition-colors">Contact</a></li>
-                  </ul>
-                </div>
-                <div className="text-center lg:text-left">
-                  <h3 className="font-semibold text-[#2B2B2B] mb-3">Legal</h3>
-                  <ul className="space-y-2 text-sm text-[#B3B3B3]">
-                    <li><a href="#" className="hover:text-[#2B2B2B] transition-colors">Privacy</a></li>
-                    <li><a href="#" className="hover:text-[#2B2B2B] transition-colors">Terms</a></li>
-                    <li><a href="#" className="hover:text-[#2B2B2B] transition-colors">Cookies</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Section */}
-            <div className="mt-12 pt-8 border-t border-[#D4D4D4] flex flex-col lg:flex-row justify-between items-center gap-4">
-              <p className="text-sm text-[#B3B3B3]">
-                © {new Date().getFullYear()} Feed Flow. All rights reserved.
-              </p>
-              <div className="flex gap-4">
-                <a href="#" className="text-[#B3B3B3] hover:text-[#2B2B2B] transition-colors" aria-label="Twitter">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
-                  </svg>
-                </a>
-                <a href="#" className="text-[#B3B3B3] hover:text-[#2B2B2B] transition-colors" aria-label="Facebook">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
-                  </svg>
-                </a>
-                <a href="#" className="text-[#B3B3B3] hover:text-[#2B2B2B] transition-colors" aria-label="Instagram">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </div>
-        </footer>
       </div>
+
+      {/* Section 3 - Footer */}
+      <footer className="w-full bg-gradient-to-t from-[#D4D4D4] to-[#FFFFFF] pt-24 pb-8 px-6 lg:px-24 text-[#2B2B2B]">
+        <div className="w-full mx-auto">
+
+          {/* Massive Title */}
+          <div className="py-6 md:py-12 overflow-hidden select-none flex items-center justify-center">
+            <h1 className="text-[15vw] md:text-[11.5vw] font-black leading-none tracking-[-0.05em] text-[#2B2B2B] whitespace-nowrap -mb-8 md:-mb-12 text-center w-full">
+              RIZZ NETWORK
+            </h1>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="flex justify-between items-center pt-8 border-t border-[#2B2B2B]/10">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#888888]">
+              ©{new Date().getFullYear()} RIZZ NETWORK
+            </span>
+            <a href="#" className="text-[10px] font-black uppercase tracking-widest hover:text-black transition-colors">
+              Follow us on X <span className="text-sm">↗</span>
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

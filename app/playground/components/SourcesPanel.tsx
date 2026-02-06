@@ -5,9 +5,13 @@ interface SourcesPanelProps {
     sources: Source[];
     isAddingSource: boolean;
     newSourceUrl: string;
+    newSourceText: string;
+    sourceInputMode: 'url' | 'text';
+    setSourceInputMode: (mode: 'url' | 'text') => void;
     expandedSource: number | null;
     activeTab: 'twitter' | 'linkedin' | 'blog' | 'summary' | 'image' | null;
     setNewSourceUrl: (url: string) => void;
+    setNewSourceText: (text: string) => void;
     setIsAddingSource: (isAdding: boolean) => void;
     handleCreateSource: () => void;
     addSource: () => void;
@@ -26,9 +30,13 @@ export function SourcesPanel({
     sources,
     isAddingSource,
     newSourceUrl,
+    newSourceText,
+    sourceInputMode,
+    setSourceInputMode,
     expandedSource,
     activeTab,
     setNewSourceUrl,
+    setNewSourceText,
     setIsAddingSource,
     handleCreateSource,
     addSource,
@@ -54,12 +62,14 @@ export function SourcesPanel({
             case 'article': return '📄';
             case 'github': return '💻';
             case 'doc': return '📚';
+            case 'text': return '✎';
         }
     };
 
     const getSourceColor = (type: SourceType) => {
         switch (type) {
             case 'github': return 'bg-[#2B2B2B] text-white';
+            case 'text': return 'bg-amber-50 text-amber-700 border border-amber-100';
             default: return 'bg-[#D4D4D4] text-[#2B2B2B]';
         }
     };
@@ -89,23 +99,52 @@ export function SourcesPanel({
                             </div>
 
                             {isAddingSource ? (
-                                <div className="flex flex-col gap-3 pt-2">
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-[10px] font-bold text-[#B3B3B3] uppercase tracking-widest">Connect New Node</label>
-                                        <input
-                                            type="url"
-                                            value={newSourceUrl}
-                                            onChange={(e) => setNewSourceUrl(e.target.value)}
-                                            placeholder="Paste URL (GitHub, YouTube, Web)"
-                                            className="w-full rounded-2xl border border-[#D4D4D4] px-4 py-3 text-sm text-[#2B2B2B] placeholder-[#B3B3B3] focus:outline-none focus:ring-2 focus:ring-[#2B2B2B] focus:border-[#2B2B2B]"
-                                        />
+                                <div className="flex flex-col gap-3 pt-2 animate-in fade-in slide-in-from-top-4 duration-300">
+                                    <div className="flex bg-[#F5F5F5] p-1 rounded-xl">
+                                        <button
+                                            onClick={() => setSourceInputMode('url')}
+                                            className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all ${sourceInputMode === 'url' ? 'bg-white text-black shadow-sm' : 'text-gray-400'}`}
+                                        >
+                                            URL Node
+                                        </button>
+                                        <button
+                                            onClick={() => setSourceInputMode('text')}
+                                            className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all ${sourceInputMode === 'text' ? 'bg-white text-black shadow-sm' : 'text-gray-400'}`}
+                                        >
+                                            Text Node
+                                        </button>
                                     </div>
+
+                                    {sourceInputMode === 'url' ? (
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[10px] font-bold text-[#B3B3B3] uppercase tracking-widest">Connect New Node</label>
+                                            <input
+                                                type="url"
+                                                value={newSourceUrl}
+                                                onChange={(e) => setNewSourceUrl(e.target.value)}
+                                                placeholder="Paste URL (GitHub, YouTube, Web)"
+                                                className="w-full rounded-2xl border border-[#D4D4D4] px-4 py-3 text-sm text-[#2B2B2B] placeholder-[#B3B3B3] focus:outline-none focus:ring-2 focus:ring-[#2B2B2B] focus:border-[#2B2B2B]"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[10px] font-bold text-[#B3B3B3] uppercase tracking-widest">Manual Intelligence Entry</label>
+                                            <textarea
+                                                value={newSourceText}
+                                                onChange={(e) => setNewSourceText(e.target.value)}
+                                                placeholder="Paste text or notes directly here..."
+                                                className="w-full h-32 rounded-2xl border border-[#D4D4D4] px-4 py-3 text-sm text-[#2B2B2B] placeholder-[#B3B3B3] focus:outline-none focus:ring-2 focus:ring-[#2B2B2B] focus:border-[#2B2B2B] resize-none"
+                                            />
+                                        </div>
+                                    )}
+
                                     <div className="flex items-center justify-end gap-2">
                                         <button
                                             type="button"
                                             onClick={() => {
                                                 setIsAddingSource(false);
                                                 setNewSourceUrl('');
+                                                setNewSourceText('');
                                             }}
                                             className="px-4 py-2 rounded-full text-xs font-bold text-[#B3B3B3] hover:text-[#2B2B2B]"
                                         >
@@ -115,7 +154,7 @@ export function SourcesPanel({
                                             type="button"
                                             onClick={handleCreateSource}
                                             className="px-5 py-2 rounded-full text-xs font-bold text-white bg-[#2B2B2B] hover:bg-black disabled:opacity-50"
-                                            disabled={!newSourceUrl.trim()}
+                                            disabled={sourceInputMode === 'url' ? !newSourceUrl.trim() : !newSourceText.trim()}
                                         >
                                             Add Node
                                         </button>
@@ -169,7 +208,7 @@ export function SourcesPanel({
                         <div className="h-full flex flex-col gap-6">
                             <div className="flex items-center gap-2 mb-2">
                                 <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                <h3 className="text-xs font-black text-[#1A1A1A] uppercase tracking-widest">Agent Refinement Engine</h3>
+                                <h3 className="text-xs font-black text-[#1A1A1A] uppercase tracking-widest">Content Refinement Engine</h3>
                             </div>
 
                             <div className="flex-1 flex flex-col bg-[#F9F9FB] border border-[#EEEEF2] rounded-[32px] p-6">
