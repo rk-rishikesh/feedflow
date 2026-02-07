@@ -21,7 +21,11 @@ function LinkedInPostSkeleton({ showLine = false }: { showLine?: boolean }) {
                             <div className="w-1 h-1 rounded-full bg-slate-100" />
                         </div>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
+                        <div className="h-3.5 w-full bg-slate-100 rounded-md" />
+                        <div className="h-3.5 w-full bg-slate-100 rounded-md" />
+                        <div className="h-3.5 w-full bg-slate-100 rounded-md" />
+                        <div className="h-3.5 w-full bg-slate-100 rounded-md" />
                         <div className="h-3.5 w-full bg-slate-100 rounded-md" />
                         <div className="h-3.5 w-full bg-slate-100 rounded-md" />
                         <div className="h-3.5 w-4/5 bg-slate-50 rounded-md" />
@@ -127,8 +131,8 @@ export function LinkedInPlayground({
                 {/* Right: Preview */}
                 <div className="col-span-7 flex flex-col min-h-0">
                     <h3 className="text-xs font-bold text-[#1A1A1A] uppercase tracking-widest mb-2 px-2 opacity-50 shrink-0">LinkedIn Post Preview</h3>
-                    <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-4 pb-20 space-y-4">
-                        <div className="max-w-[680px] mx-auto w-full space-y-4">
+                    <div className="flex-1 min-h-0">
+                        <div className="max-w-[680px] mx-auto w-full h-full flex flex-col">
 
                             {!draftContent && !activeLoading && (
                                 <div className="relative">
@@ -164,7 +168,7 @@ export function LinkedInPlayground({
                             )}
 
                             {draftContent && (
-                                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm transition-all duration-500 animate-in fade-in slide-in-from-bottom-4 h-full flex flex-col">
+                                <div className="bg-white border border-gray-200 rounded-[32px] overflow-hidden shadow-sm transition-all duration-500 animate-in fade-in slide-in-from-bottom-4 h-full flex flex-col">
                                     {/* Header - Fixed */}
                                     <div className="p-4 flex justify-between shrink-0 border-b border-gray-100">
                                         <div className="flex gap-3">
@@ -198,7 +202,7 @@ export function LinkedInPlayground({
                                         <textarea
                                             value={draftContent}
                                             onChange={(e) => setDraftContent(e.target.value)}
-                                            className="w-full resize-none border-none outline-none text-[#1A1A1A] text-sm leading-relaxed bg-transparent min-h-full"
+                                            className="w-full resize-none border-none outline-none text-[#1A1A1A] text-sm leading-relaxed bg-transparent min-h-full custom-scrollbar overflow-hidden"
                                             style={{ height: 'auto' }}
                                         />
                                     </div>
@@ -248,11 +252,12 @@ export function LinkedInPlayground({
 
             <style jsx>{`
                 .custom-scrollbar::-webkit-scrollbar {
-                    display: none;
+                    display: none !important;
+                    width: 0 !important;
                 }
                 .custom-scrollbar {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
+                    -ms-overflow-style: none !important;
+                    scrollbar-width: none !important;
                 }
             `}</style>
         </div>

@@ -38,14 +38,8 @@ export default function MainFeed({ contentItems, getContentDetails, getSourceIco
                         <div className="w-8 h-8 bg-[#2B2B2B] rounded-xl flex items-center justify-center">
                             <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
                         </div>
-                        <span className="text-xl font-black tracking-tight text-[#2B2B2B]">FeedFlow</span>
+                        <span className="text-xl font-black tracking-tight text-[#2B2B2B]">Rizz Network</span>
                     </div>
-                    <button
-                        onClick={() => router.push('/playground')}
-                        className="px-6 py-2 text-white rounded-full text-xs font-bold transition-all flex items-center gap-2 active:scale-95"
-                    >
-                        <Image src="/assets/icons/create.png" alt="Plus" width={24} height={24} />
-                    </button>
                 </div>
 
                 {/* Content Feed */}

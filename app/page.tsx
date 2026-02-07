@@ -29,8 +29,10 @@ export default function Home() {
           </div>
 
           {/* Text - Extreme Right */}
-          <div className="text-[#2B2B2B] text-base lg:text-lg xl:text-xl font-medium leading-relaxed max-w-xl">
-            From YouTube transcripts and GitHub repos to complex PDFs. Our multi-agent orchestration layer filters the noise to pipeline high-signal intelligence into content with peak Rizz.
+          <div className="text-[#888888] font-medium leading-relaxed uppercase text-[10px] tracking-[0.4em] max-w-xl">
+            From YouTube transcripts and GitHub repos to complex PDFs.
+            <br />
+            Our multi-agent orchestration layer filters the noise to pipeline high-signal intelligence into content with <span className="italic text-[#2B2B2B] font-bold">peak Rizz</span>.
           </div>
         </div>
 
@@ -166,10 +168,12 @@ export default function Home() {
         {/* Section 2 */}
         <div className="w-full mt-16 px-4 lg:px-8">
           {/* Header Text */}
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#2B2B2B] mb-2 tracking-wide">
-              Your Intelligence Pipeline that reasons through repositories, transcripts, and docs to architect high-velocity content with peak Rizz.
-            </h2>
+          <div className="text-center mb-24">
+            <h2 className="text-5xl font-black text-[#2B2B2B] tracking-tight mb-6">Intelligence Pipeline</h2>
+            <p className="max-w-3xl mx-auto text-[#888888] font-medium leading-relaxed uppercase text-[10px] tracking-[0.4em]">
+              Reasoning through repositories, transcripts, and docs <br />
+              to architect high-velocity content with <span className="italic text-[#2B2B2B] font-bold">peak Rizz</span>.
+            </p>
           </div>
 
           {/* Character Grid */}
