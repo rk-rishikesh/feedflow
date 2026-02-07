@@ -193,20 +193,34 @@ export function ImagePlayground({
                                                 <img
                                                     src={imageBase64.startsWith('data:image') ? imageBase64 : `data:image/png;base64,${imageBase64}`}
                                                     alt="AI Generated Visual"
-                                                    className="w-full h-full object-cover animate-in fade-in zoom-in-95 duration-1000"
+                                                    className={`w-full h-full object-cover animate-in fade-in zoom-in-95 duration-1000 ${activeLoading ? 'opacity-40 grayscale blur-sm' : ''}`}
                                                 />
-                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                                                    <a
-                                                        href={imageBase64.startsWith('data:image') ? imageBase64 : `data:image/png;base64,${imageBase64}`}
-                                                        download="generated-visual.png"
-                                                        className="p-4 bg-white rounded-full text-black hover:scale-110 transition-transform shadow-xl"
-                                                        title="Download Image"
-                                                    >
-                                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                                        </svg>
-                                                    </a>
-                                                </div>
+                                                {activeLoading && (
+                                                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/10 backdrop-blur-[2px]">
+                                                        <div className="relative mb-4">
+                                                            <div className="w-12 h-12 rounded-full border-4 border-purple-500/20 border-t-purple-500 animate-spin" />
+                                                            <span className="absolute inset-0 flex items-center justify-center text-xl">🎨</span>
+                                                        </div>
+                                                        <div className="flex flex-col items-center">
+                                                            <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest animate-pulse">Refining Vision</span>
+                                                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter mt-1">Applying global context...</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {!activeLoading && (
+                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                                                        <a
+                                                            href={imageBase64.startsWith('data:image') ? imageBase64 : `data:image/png;base64,${imageBase64}`}
+                                                            download="generated-visual.png"
+                                                            className="p-4 bg-white rounded-full text-black hover:scale-110 transition-transform shadow-xl"
+                                                            title="Download Image"
+                                                        >
+                                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                            </svg>
+                                                        </a>
+                                                    </div>
+                                                )}
                                             </>
                                         ) : (
                                             <div className="flex flex-col items-center gap-4">
@@ -237,6 +251,6 @@ export function ImagePlayground({
                     scrollbar-width: none;
                 }
             `}</style>
-        </div>
+        </div >
     );
 }

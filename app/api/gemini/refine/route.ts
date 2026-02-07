@@ -71,7 +71,76 @@ Please refine the content now.
         });
 
         if (!response.text) throw new Error("Failed to generate refined content");
-        return NextResponse.json(JSON.parse(response.text));
+        const result = JSON.parse(response.text);
+
+        // If it's an image, we need to actually generate the image too
+        if (platform === 'image') {
+            console.log("Refining Image: Generating new masterpiece...");
+            const visualPrompt = result.updatedContent;
+            let imageBase64 = "";
+
+            try {
+                // Phase 2: Native Image Generation (Same logic as image route)
+                const imageResponse = await (ai.models as any).generateContent({
+                    model: "gemini-2.5-flash-image",
+                    contents: [{ role: "user", parts: [{ text: visualPrompt }] }],
+                });
+
+                const candidates = (imageResponse as any).candidates || (imageResponse as any).response?.candidates;
+                if (candidates && candidates[0]?.content?.parts) {
+                    for (const part of candidates[0].content.parts) {
+                        if (part.inlineData) {
+                            imageBase64 = part.inlineData.data;
+                            break;
+                        }
+                    }
+                }
+
+                // Fallback to gemini-2.0-flash
+                if (!imageBase64) {
+                    console.log("Fallback to 2.0-flash for refined image...");
+                    const fallbackResponse = await (ai.models as any).generateContent({
+                        model: "gemini-2.0-flash",
+                        contents: [{ role: "user", parts: [{ text: `Generate an image for: ${visualPrompt}` }] }],
+                    });
+                    const fallbackCandidates = (fallbackResponse as any).candidates || (fallbackResponse as any).response?.candidates;
+                    if (fallbackCandidates && fallbackCandidates[0]?.content?.parts) {
+                        for (const part of fallbackCandidates[0].content.parts) {
+                            if (part.inlineData) {
+                                imageBase64 = part.inlineData.data;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (imageBase64) {
+                    result.imageBase64 = imageBase64;
+                }
+            } catch (imgError) {
+                console.error("Refinement Image Generation Error:", imgError);
+                // Attempt imagen-3 fallback if available
+                try {
+                    const imgModels = ai.models as any;
+                    if (imgModels && typeof imgModels.generateImages === 'function') {
+                        const res = await imgModels.generateImages({
+                            model: "imagen-3.0-generate-001",
+                            prompt: visualPrompt,
+                            config: { number_of_images: 1 }
+                        });
+                        const images = res.generatedImages || res.generated_images;
+                        if (images?.length > 0) {
+                            imageBase64 = images[0].image.data || images[0].image.base64 || "";
+                            result.imageBase64 = imageBase64;
+                        }
+                    }
+                } catch (e) {
+                    console.error("Final refinement image fallback failed.");
+                }
+            }
+        }
+
+        return NextResponse.json(result);
 
     } catch (error: any) {
         console.error("Refinement Agent Error:", error);
