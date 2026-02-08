@@ -114,9 +114,9 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative z-10 grid grid-cols-2 gap-2 p-6 w-full">
                     <div className="h-10 border border-[#F0F0F0] rounded-xl flex items-center justify-center text-[10px] font-black group-hover:bg-black group-hover:text-white transition-colors">X</div>
-                    <div className="h-10 border border-[#F0F0F0] rounded-xl flex items-center justify-center text-[10px] font-black group-hover:bg-black group-hover:text-white transition-colors">IN</div>
-                    <div className="h-10 border border-[#F0F0F0] rounded-xl flex items-center justify-center text-[10px] font-black group-hover:bg-black group-hover:text-white transition-colors">DOC</div>
-                    <div className="h-10 border border-[#F0F0F0] rounded-xl flex items-center justify-center text-[10px] font-black group-hover:bg-black group-hover:text-white transition-colors">IMG</div>
+                    <div className="h-10 border border-[#F0F0F0] rounded-xl flex items-center justify-center text-[10px] font-black group-hover:bg-black group-hover:text-white transition-colors">LINKEDIN</div>
+                    <div className="h-10 border border-[#F0F0F0] rounded-xl flex items-center justify-center text-[10px] font-black group-hover:bg-black group-hover:text-white transition-colors">ARTICLE</div>
+                    <div className="h-10 border border-[#F0F0F0] rounded-xl flex items-center justify-center text-[10px] font-black group-hover:bg-black group-hover:text-white transition-colors">DIGEST</div>
                   </div>
                 </div>
                 <h4 className="text-lg font-black text-[#2B2B2B] mb-2">Pick the type.</h4>
@@ -252,7 +252,12 @@ export default function Home() {
             <span className="text-[10px] font-bold uppercase tracking-widest text-[#888888]">
               ©{new Date().getFullYear()} RIZZ NETWORK
             </span>
-            <a href="#" className="text-[10px] font-black uppercase tracking-widest hover:text-black transition-colors">
+            <a
+              href="https://x.com/rizznetwork"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] font-black uppercase tracking-widest hover:text-black transition-colors"
+            >
               Follow us on X <span className="text-sm">↗</span>
             </a>
           </div>

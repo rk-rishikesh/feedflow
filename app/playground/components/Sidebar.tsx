@@ -96,7 +96,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 <div className="w-8 h-[1px] bg-[#333333]" />
 
                 <button
-                    onClick={() => router.back()}
+                    onClick={() => router.push('/home')}
                     className="p-3 rounded-2xl text-[#888888] hover:text-white hover:bg-[#333333] transition-all group relative"
                 >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
