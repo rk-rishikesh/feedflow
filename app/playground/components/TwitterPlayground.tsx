@@ -183,7 +183,7 @@ export function TwitterPlayground({
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-2">
                                             <span className="font-bold text-[#1A1A1A]">X Agent</span>
-                                            <span className="text-gray-400 text-sm">@feedflow_ai · {idx + 1}/{tweets.length}</span>
+                                            <span className="text-gray-400 text-sm">@rizznetwork · {idx + 1}/{tweets.length}</span>
                                         </div>
                                         <textarea
                                             value={tweet}
