@@ -9,37 +9,37 @@ export default function Home() {
     <div className="min-h-screen bg-[#FFFFFF]">
       <div className="max-w-7xl mx-auto p-4 lg:p-8 min-h-screen flex flex-col">
         {/* FEED FLOW Title */}
-        <div className="flex justify-center pt-4">
-          <h1 className="font-bold text-[#2B2B2B] tracking-[0.01em] leading-none text-[160px]">
+        <div className="flex justify-center pt-8 md:pt-4">
+          <h1 className="font-bold text-[#2B2B2B] tracking-[0.01em] leading-none text-[12vw] sm:text-[100px] md:text-[130px] lg:text-[160px]">
             RIZZ NETWORK
           </h1>
         </div>
 
         {/* Middle Section */}
-        <div className="flex justify-between items-start mt-4 px-11 gap-64">
+        <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start mt-4 px-6 lg:px-11 gap-8 lg:gap-64">
           {/* Navigation Bar - Left */}
-          <div className="bg-[#2B2B2B] rounded-full px-6 lg:px-8 py-3 lg:py-4 flex items-center justify-center gap-4 lg:gap-6 min-w-[300px] lg:min-w-[400px]">
-            <span className="text-white font-semibold text-sm lg:text-base xl:text-lg">GENERATE</span>
+          <div className="bg-[#2B2B2B] rounded-full px-6 lg:px-8 py-3 lg:py-4 flex items-center justify-center gap-4 lg:gap-6 min-w-full sm:min-w-[350px] lg:min-w-[400px]">
+            <span className="text-white font-semibold text-xs sm:text-sm lg:text-base xl:text-lg">GENERATE</span>
             <div className="w-1 h-1 bg-white rounded-full"></div>
-            <span className="text-white font-semibold text-sm lg:text-base xl:text-lg">DRAFT</span>
-            <svg width="8" height="8" viewBox="0 0 8 8" fill="none" className="text-white">
+            <span className="text-white font-semibold text-xs sm:text-sm lg:text-base xl:text-lg">DRAFT</span>
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="none" className="text-white shrink-0">
               <path d="M4 0L8 4L4 8L0 4L4 0Z" fill="white" transform="rotate(45 4 4)" />
             </svg>
-            <span className="text-white font-semibold text-sm lg:text-base xl:text-lg">POST</span>
+            <span className="text-white font-semibold text-xs sm:text-sm lg:text-base xl:text-lg">POST</span>
           </div>
 
           {/* Text - Extreme Right */}
-          <div className="text-[#888888] font-medium leading-relaxed uppercase text-[10px] tracking-[0.4em] max-w-xl">
+          <div className="text-[#888888] font-medium leading-relaxed uppercase text-[10px] tracking-[0.4em] max-w-xl text-center lg:text-left">
             From YouTube transcripts and GitHub repos to complex PDFs.
-            <br />
+            <br className="hidden sm:block" />
             Our multi-agent orchestration layer filters the noise to pipeline high-signal intelligence into content with <span className="italic text-[#2B2B2B] font-bold">peak Rizz</span>.
           </div>
         </div>
 
         {/* Bottom Section with Character */}
-        <div className="flex-1 flex items-end justify-between px-11 pb-24 w-full">
+        <div className="flex-1 flex flex-col lg:flex-row items-center lg:items-end justify-between px-6 lg:px-11 pb-16 lg:pb-24 w-full gap-12 lg:gap-0">
 
-          <div className="w-80 h-80 lg:w-96 lg:h-96 xl:w-[448px] xl:h-[448px] -mt-12 transition-all duration-500 hover:scale-110 hover:-rotate-6 hover:drop-shadow-2xl cursor-pointer">
+          <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 xl:w-[448px] xl:h-[448px] lg:-mt-12 transition-all duration-500 hover:scale-110 hover:-rotate-6 hover:drop-shadow-2xl cursor-pointer">
             <Image
               src="/assets/characters/three.svg"
               alt="Character"
@@ -51,7 +51,7 @@ export default function Home() {
           </div>
 
           <div
-            className="bg-[#2B2B2B] rounded-full px-6 py-3 flex items-center gap-4 w-fit mb-32 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#2B2B2B]/30"
+            className="bg-[#2B2B2B] rounded-full px-6 py-3 flex items-center gap-4 w-fit lg:mb-32 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#2B2B2B]/30"
             onClick={() => router.push('/home')}
           >
             <span className="text-white font-bold text-base lg:text-lg xl:text-xl transition-all duration-300">
@@ -67,7 +67,7 @@ export default function Home() {
         </div>
 
         {/* Middle Section - How it Works */}
-        <div className="w-full py-32 px-11 relative overflow-hidden">
+        <div className="w-full py-16 lg:py-32 px-6 lg:px-11 relative overflow-hidden">
           {/* Background Path (Dotted Line) */}
           <div className="absolute top-[60%] left-0 w-full h-40 pointer-events-none opacity-20 hidden lg:block">
             <svg width="100%" height="100%" viewBox="0 0 1200 120" fill="none" preserveAspectRatio="none">
@@ -81,8 +81,8 @@ export default function Home() {
           </div>
 
           <div className="max-w-7xl mx-auto relative z-10">
-            <div className="text-center mb-24">
-              <h2 className="text-5xl font-black text-[#2B2B2B] tracking-tight mb-6">How it works</h2>
+            <div className="text-center mb-16 lg:mb-24">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#2B2B2B] tracking-tight mb-6">How it works</h2>
               <p className="max-w-2xl mx-auto text-[#888888] font-medium leading-relaxed uppercase text-[10px] tracking-[0.4em]">
                 Your intelligence pipeline from raw noise to high-impact signals.
               </p>
@@ -168,10 +168,10 @@ export default function Home() {
         {/* Section 2 */}
         <div className="w-full mt-16 px-4 lg:px-8">
           {/* Header Text */}
-          <div className="text-center mb-24">
-            <h2 className="text-5xl font-black text-[#2B2B2B] tracking-tight mb-6">Intelligence Pipeline</h2>
+          <div className="text-center mb-16 lg:mb-24">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#2B2B2B] tracking-tight mb-6">Intelligence Pipeline</h2>
             <p className="max-w-3xl mx-auto text-[#888888] font-medium leading-relaxed uppercase text-[10px] tracking-[0.4em]">
-              Reasoning through repositories, transcripts, and docs <br />
+              Reasoning through repositories, transcripts, and docs <br className="hidden sm:block" />
               to architect high-velocity content with <span className="italic text-[#2B2B2B] font-bold">peak Rizz</span>.
             </p>
           </div>
@@ -180,54 +180,54 @@ export default function Home() {
           <div className="grid grid-cols-5 gap-3 lg:gap-4 justify-items-center max-w-5xl mx-auto">
             {/* Row 1 - 4 characters with empty space on left */}
             <div></div>
-            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/one.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-6" />
             </div>
-            <div className="bg-[#B3B3B3] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#B3B3B3] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/two.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6" />
             </div>
             <div></div>
-            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/four.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-6" />
             </div>
 
             {/* Row 2 - 5 characters (full row) */}
-            <div className="bg-[#B3B3B3] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#B3B3B3] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/five.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6" />
             </div>
             <div></div>
             <div></div>
-            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/eight.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-6" />
             </div>
-            <div className="bg-[#B3B3B3] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#B3B3B3] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/nine.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6" />
             </div>
 
             {/* Row 3 - 4 characters with empty space on right */}
-            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/ten.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-6" />
             </div>
-            <div className="bg-[#B3B3B3] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#B3B3B3] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/eleven.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6" />
             </div>
-            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/twelve.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-6" />
             </div>
             <div></div>
-            <div className="bg-[#B3B3B3] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#B3B3B3] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/one.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6" />
             </div>
             <div></div>
 
             {/* Row 4 - 3 characters with empty spaces on both sides */}
-            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/two.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-6" />
             </div>
-            <div className="bg-[#B3B3B3] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#B3B3B3] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/three.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6" />
             </div>
-            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-24 h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
+            <div className="bg-[#D4D4D4] rounded-2xl p-2 w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 flex items-center justify-center group cursor-pointer">
               <Image src="/assets/characters/four.svg" alt="Character" width={128} height={128} className="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-6" />
             </div>
             <div></div>
@@ -242,13 +242,13 @@ export default function Home() {
 
           {/* Massive Title */}
           <div className="py-6 md:py-12 overflow-hidden select-none flex items-center justify-center">
-            <h1 className="text-[15vw] md:text-[11.5vw] font-black leading-none tracking-[-0.05em] text-[#2B2B2B] whitespace-nowrap -mb-8 md:-mb-12 text-center w-full">
+            <h1 className="mb-2 text-[12vw] md:text-[11.5vw] font-black leading-none tracking-[-0.05em] text-[#2B2B2B] whitespace-nowrap -mb-8 md:-mb-12 text-center w-full">
               RIZZ NETWORK
             </h1>
           </div>
 
           {/* Bottom Bar */}
-          <div className="flex justify-between items-center pt-8 border-t border-[#2B2B2B]/10">
+          <div className="flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-[#2B2B2B]/10 gap-4 sm:gap-0">
             <span className="text-[10px] font-bold uppercase tracking-widest text-[#888888]">
               ©{new Date().getFullYear()} RIZZ NETWORK
             </span>

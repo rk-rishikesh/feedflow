@@ -35,10 +35,8 @@ export default function MainFeed({ contentItems, getContentDetails, getSourceIco
                 {/* Top Navigation & Brand */}
                 <div className="pt-8 px-12 lg:px-20 flex items-center justify-between mb-8">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-[#2B2B2B] rounded-xl flex items-center justify-center">
-                            <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
-                        </div>
-                        <span className="text-xl font-black tracking-tight text-[#2B2B2B]">Rizz Network</span>
+                        <Image src="/assets/logo.png" alt="Logo" width={24} height={24} />
+                        <span className="text-xl text-[#2B2B2B]">Rizz Network</span>
                     </div>
                 </div>
 
@@ -111,7 +109,7 @@ export default function MainFeed({ contentItems, getContentDetails, getSourceIco
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex-1 flex flex-col items-center justify-center py-32 text-center">
+                            <div className="flex-1 flex flex-col items-center justify-center text-center max-h-[60vh]">
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
