@@ -19,6 +19,9 @@ The core of Rizz Network is a sophisticated orchestration layer involving multip
 - **Visual Agent**: Generates context-aware imagery for your content.
 
 For a detailed breakdown of how these agents communicate, check out:
+
+![Rizz Network Preview](https://github.com/user-attachments/assets/98f06f56-8b3e-431e-89a9-343b1c758dc6)
+
 👉 **[AGENTS.md](./AGENTS.md)**
 
 ## 🛠 Tech Stack
